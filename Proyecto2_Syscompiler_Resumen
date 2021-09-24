@@ -1,0 +1,4 @@
+WEB SERVER WITH NODEJS
+
+1. Create Folder for server
+2. run > nmp init //(use -y flag to use default settings for package json)
