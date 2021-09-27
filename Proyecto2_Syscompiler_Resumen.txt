@@ -49,5 +49,7 @@ CONFIGURATION CORS - CROSS ORIGIN RESOURCE SHARING
 One resources to access another resource.
 1. npm install cors //at moment version cors@2.8.5
 
+CREATING FIRST NODE JS SERVER WITH EXPRESS
+
 
 
