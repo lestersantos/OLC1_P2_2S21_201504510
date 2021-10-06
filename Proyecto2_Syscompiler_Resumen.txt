@@ -51,5 +51,176 @@ One resources to access another resource.
 
 CREATING FIRST NODE JS SERVER WITH EXPRESS
 
+JISON LEXICAL DEFINITIONS 
+The format of the input file and the stle of the pattern matchers are modeled after Flex.
 
+**input file : http://dinosaur.compilertools.net/flex/flex_6.html#SEC6
+
+The flex input files consists of three sections, separated by a line
+with just %% in int:
+
+DEFINITIONS
+name definition e.g:
+----------------
+DIGIT    [0-9]
+ID       [a-z][a-z0-9]*
+
+RULES
+pattern action
+
+DESCRIPCION DEL LENGUAJE
+
+COMENTARIOS - COMMENTS
+-------------------------
+comentario unilinea    = //{cualquier cosa}* salto_linea
+comentario multilinea  = /* {cualquier cosa}* */
+
+DATA TYPES
+-------------------------
+digito      = [0-9]
+entero      = (digito)+
+doble       = (digito)+ "." (digito)+
+letra       = [a-zA-ZñÑ]
+id          = letra (letra | digito | "_")*
+escapechar  = ['|"|\|n|t|r]
+escape      = '\'(escapechar)
+aceptacion  = [cualquier cosa menos (\|')]
+cadena      = " (escape | aceptacion)*  "
+escapechar2 = ['|"|\|n|t|r]
+escape2     = '\'(escapechar2)
+aceptacion2 = [cualquier cosa menos (\|')]
+caracter    = ' escape2 | aceptacion2 '
+
+SECUENCIAS DE ESCAPE (ESCAPE CHARACTERS)
+----------------------------------------
+\n      salto de linea
+\t      Tabulacion
+\r      Retorno de carro
+\\      Barra invertida
+\"      Comilla doble
+\'      Comilla simple
+PALABRAS RESERVADAS (KEYWORDS)
+------------------------------
+**TIPOS DE DATOS**
+Int
+Double
+Boolean
+Char
+String
+True
+False
+**ESTRUCTURAS DE DATOS**
+*Operador new*
+new
+*Listas dinamicas*
+DynamicList
+append
+getValue
+setValue
+**SENTENCIAS DE CONTROL**
+if
+else
+switch
+case
+default
+**SENTECIAS CICLICAS**
+while
+for
+Do
+**SENTENCIAS DE TRANSFERENCIA**
+*sentencia break*
+break
+continue
+return
+**METODOS & FUNCIONES**
+void
+WriteLine
+toLower
+toUpper
+length
+truncate
+round
+typeof
+toString
+toCharArray
+start
+with
+
+SIMBOLOS ACEPTADOS
+------------------------
+. punto - dot
+, coma - comma
+; punto y coma - semicolon
+: dos puntos - colon
+[ corchete que abre - left square bracket
+] corchete que cierra - right square bracket
+( parentesis que abre - left parentheses
+) parentesis que cierra - right parentheses
+{ llave que abre - left brace - left bracket
+} llave que cierra - right brace - right bracket
+= igual - equal (Asignacion/Assignment)
+
+....Operadores Relacionales ....
+<=  Menor o igual - less than or equal to
+<   Menor que - less than
+>=  Mayor o igual - greater than or equal to
+>   Mayor que - greater than
+==  Igualacion - Equal to
+!=  Diferencia - not equal
+
+....Operador Ternario ....
+?
+.... Operadores logicos ....
+&&  And - and
+||  Or - or
+!   not - not
+.... Operadores Aritmeticos ....
+-- menosmenos - decrement
+++ masmas - increment
++   suma - plus
+-   resta - subtraction
+*   multiplicacion - multiplication
+/   division - division
+^  potencia - exponentiation
+%   Modulo - modulus/remainder
+-   Unario - unary negation
+
+PRECEDENCIA DE MAYOR A MENOR
+------------------------------------------
+masmas/incremento   ++  n/a
+menosmenos/decre    --  n/a
+------------------------------------------
+negacion/not        !   right to left
+unario/unary        -   
+masmas/prefijo      ++  
+menosmenos/prefijo  --
+------------------------------------------
+potencia            ^   righ to left (no asociativa?)
+------------------------------------------
+multiplicacion      *
+division            /
+modulo              %   left to right
+------------------------------------------
+suma                +   left to right
+resta               -
+------------------------------------------
+menor que           <
+menor igual que     <=
+mayor que           >
+mayor igual que     >=  left to right
+------------------------------------------
+igualdad            ==
+diferencia          !=  left to right
+------------------------------------------
+y/and               &&  left to right
+------------------------------------------
+o/or                ||  left to right
+------------------------------------------
+
+GRAMATICA PARA PROYECTO SYSCOMPILER
+-----------------------------------------
+
+begin -> instructions (EOF)
+
+instructions -> 
 

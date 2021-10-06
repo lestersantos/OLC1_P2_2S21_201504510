@@ -1,0 +1,15 @@
+//ARCHIVO DE PRUEBA PROYECTO 2 
+
+/* COMENTARIO
+   MULTILINEA
+
+*/
+
+Evaluar[((-(1+1+1+1+1-5-10)+(4*3-5^3))+8200*3/10)*3];  
+Evaluar[18-13];  
+Evaluar[8*9+2^3^2];
+Evaluar[3!];
+
+//console.log(8*9+2^3^2)
+
+//Find del archivo

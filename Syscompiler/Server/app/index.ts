@@ -1,16 +1,12 @@
 import express = require('express');
+var parser = require('../src/Analyzer/grammar').parser;
 
+const cors = require('cors');
 const app = express();
 
-app.get('', (req, res) => {
+app.use(express.json({limit: "50mb"}));
 
-    res.send("Hello Express!");
-})
-
-app.get('/help', (req, res) => {
-
-    res.send('Help page');
-})
+app.use("/api",require("./routes/routes"));
 
 app.listen(3000, () => {
 
