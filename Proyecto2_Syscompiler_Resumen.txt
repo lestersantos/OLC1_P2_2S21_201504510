@@ -84,7 +84,7 @@ letra       = [a-zA-ZñÑ]
 id          = letra (letra | digito | "_")*
 escapechar  = ['|"|\|n|t|r]
 escape      = '\'(escapechar)
-aceptacion  = [cualquier cosa menos (\|')]
+aceptacion  = [cualquier cosa menos (\|")]
 cadena      = " (escape | aceptacion)*  "
 escapechar2 = ['|"|\|n|t|r]
 escape2     = '\'(escapechar2)
@@ -224,3 +224,9 @@ begin -> instructions (EOF)
 
 instructions -> 
 
+
+
+sent_if : IF PARA e PARC LLAVA instrucciones LLAVC { $$ = new Ifs.default($3, $6, [], @1.first_line, @1.last_column); }
+        | IF PARA e PARC LLAVA instrucciones LLAVC ELSE LLAVA instrucciones LLAVC { $$ = new Ifs.default($3, $6, $10, @1.first_line, @1.last_column); }
+        | IF PARA e PARC LLAVA instrucciones LLAVC ELSE sent_if { $$ = new Ifs.default($3, $6, [$9], @1.first_line, @1.last_column); }
+        ;

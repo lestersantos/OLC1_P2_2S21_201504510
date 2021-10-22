@@ -5,6 +5,7 @@
 %lex
 %options case-insensitive 
 
+
 //REGULAR EXPRESSIONS SECTION
 num         [0-9]+
 digit       [0-9]
@@ -14,8 +15,8 @@ doublenum   {digit}+"."{digit}+
 id          {letter}({letter}|{digit}|"_")*
 //--> STRINGS
 escapechar   [\'\"\\ntr]
-escape       \\{escapechar}
-acceptance  [^\'\\]
+escape      \\{escapechar}
+acceptance  [^\"\\]
 string      (\"({escape} | {acceptance})*\")
 
 //--> CHARACTER
@@ -27,10 +28,12 @@ character   (\'({escape2} | {acceptance2})\')
 %%
 
 /* Comentarios */
-"//".*              {/*Ignoramos los comentarios simples*/}   id++
-"/*"((\*+[^/*])|([^*]))*\**"*/" {/*ignorar comentarios con multiples lineas*/}
+"//".*              {/*Ignoramos los comentarios simples*/ console.log("Reconocio: "+ yytext+" Comentario"); }   id++
+"/*"((\*+[^/*])|([^*]))*\**"*/" {/*ignorar comentarios con multiples lineas*/ console.log("Reconocio: "+ yytext+" Comentario multiple");}
 
 /* Simbolos del programa */
+"++"                  { console.log("Reconocio : " + yytext);  return 'PLUSPLUS' }
+"--"                  { console.log("Reconocio : " + yytext);  return 'MINUSMINUS' }
 "=="                  { console.log("Reconocio : " + yytext);  return 'EQUALTO' }
 
 "."                  { console.log("Reconocio : " + yytext);  return 'DOT' }
@@ -116,11 +119,11 @@ character   (\'({escape2} | {acceptance2})\')
 
 //SIMBOLOS ER
 
-{doublenum} { console.log("Reconocio : " + yytext);  return 'DOUBLENUM' } 
-{integer}   { console.log("Reconocio : " + yytext);  return 'INTEGER' }
-{id}   { console.log("Reconocio : " + yytext);  return 'ID' }
-{string}   { console.log("Reconocio : " + yytext);  return 'STRING' }
-{character}   { console.log("Reconocio : " + yytext);  return 'CHAR' }
+{doublenum} { console.log("Reconocio : " + yytext + " Doble");  return 'DOUBLENUM' } 
+{integer}   { console.log("Reconocio : " + yytext + " Entero");  return 'INTEGER' }
+{id}   { console.log("Reconocio : " + yytext+ " Id");  return 'ID' }
+{string}   { console.log("Reconocio : " + yytext+ " Cadena");  return 'STRING' }
+{character}   { console.log("Reconocio : " + yytext+ " Caracter");  return 'CHAR' }
 
 /*Espacios*/
 [\s\r\n\t]             {/* Espacios se ignoran */}
@@ -133,9 +136,43 @@ character   (\'({escape2} | {acceptance2})\')
 
 // area de imports
 %{
-    const evaluar = require('../Interpreter/Evaluar');
-%}
+    const ast = require('../Interpreter/Ast/Ast');
 
+    const Type = require('../Interpreter/SymbolTable/Type');
+    const {enumType} = require('../Interpreter/SymbolTable/Type');
+
+    const Division = require('../Interpreter/Expressions/Arithmetic/Division');
+    const Multiplication = require('../Interpreter/Expressions/Arithmetic/Multiplication');    
+    const Sum = require('../Interpreter/Expressions/Arithmetic/Sum');  
+    const Subtraction = require('../Interpreter/Expressions/Arithmetic/Subtraction');
+    const Exponentiation = require('../Interpreter/Expressions/Arithmetic/Exponentiation');
+    const Unary = require('../Interpreter/Expressions/Arithmetic/Unary');
+    const Modulus = require('../Interpreter/Expressions/Arithmetic/Modulus');
+
+    const And = require('../Interpreter/Expressions/Logic/And');
+    const Not = require('../Interpreter/Expressions/Logic/Not');
+    const Or = require('../Interpreter/Expressions/Logic/Or');
+
+    const EqualTo = require('../Interpreter/Expressions/Relational/EqualTo');
+    const GreaterEqual = require('../Interpreter/Expressions/Relational/GreaterEqual');
+    const GreaterThan = require('../Interpreter/Expressions/Relational/GreaterThan');
+    const LessEqual = require('../Interpreter/Expressions/Relational/LessEqual');
+    const LessThan = require('../Interpreter/Expressions/Relational/LessThan');
+    const NotEqual = require('../Interpreter/Expressions/Relational/NotEqual');
+
+    const Literal = require('../Interpreter/Expressions/Literal');
+    const Identifier = require('../Interpreter/Expressions/Identifier');
+
+    const WriteLine = require('../Interpreter/Instructions/WriteLine');
+    const Declaration = require('../Interpreter/Instructions/Declaration');
+    const Assignment = require('../Interpreter/Instructions/Assignment');
+    const Ifs = require('../Interpreter/Instructions/ControlStatements/Ifs');
+    const For = require('../Interpreter/Instructions/LoopStatements/For');
+    
+
+
+
+%}
 /* operator associations and precedence */
 // LOWER TO HIGHER PRECEDENCCE
 
@@ -156,42 +193,95 @@ character   (\'({escape2} | {acceptance2})\')
 
 %% /* language grammar */
 
-inicio : instrucciones EOF  { $$ = $1; return $$ };
+inicio : instrucciones EOF  { $$ = new ast.default($1); return $$ };
 
 instrucciones : instrucciones instruccion   { $$ = $1; $$.push($2); }
-            | instruccion                   { $$ = new Array(); $$.push($1); }
+            | instruccion                   { $$ = new Array(); $$.push($1);}
             ;
 
-instruccion : EVALUAR LSBRACKET e RSBRACKET SEMICOLON   { $$ =  new evaluar.default($3); }
+instruccion : writeline            { $$ = $1; }
+            | variable_declaration SEMICOLON { $$ = $1; }
+            | variable_assignment  SEMICOLON { $$ = $1; }
+            | if_statement         { $$ = $1; }
+            | for_statement        { $$ = $1; }
             ;
-// console : CONSOLE PUNTO LOG '(' e ')' { console.log("HERE is console instruction"); }
-//         ;
+
+variable_declaration  : decl_type id_list EQUAL e  {$$ = new Declaration.default($1,$2,$4,@1.first_line,@1.last_column);}
+                      | decl_type id_list  {$$ = new Declaration.default($1,$2,null,@1.first_line,@1.last_column);}
+                      ;
+
+id_list : id_list COMMA ID {$$ = $1; $$.push($3); }
+        | ID               { $$ = new Array(); $$.push($1); }
+        ;
+
+decl_type   : INT       {$$ = new Type.default(enumType.INTEGER);}
+            | DOUBLE    {$$ = new Type.default(enumType.DOUBLE);}
+            | BOOLEAN   {$$ = new Type.default(enumType.BOOLEAN);}
+            | RCHAR     {$$ = new Type.default(enumType.CHAR);}
+            | RSTRING   {$$ = new Type.default(enumType.STRING);}
+            ;
+
+writeline : WRLINE LPAR e RPAR SEMICOLON {$$ = new WriteLine.default($3); }
+            ;
+
+variable_assignment : ID EQUAL e  { $$ = new Assignment.default($1,$3,@1.first_line,@1.last_column); }
+                      ;
+
+if_statement :  IF LPAR e RPAR LCBRACKET instrucciones RCBRACKET { $$ = new Ifs.default($3,$6,[],@1.first_line,@1.last_column); }
+                | IF LPAR e RPAR LCBRACKET instrucciones RCBRACKET ELSE LCBRACKET instrucciones RCBRACKET {$$ = new Ifs.default($3,$6,$10,@1.first_line,@1.last_column);}
+                | IF LPAR e RPAR LCBRACKET instrucciones RCBRACKET ELSE if_statement {$$ = new Ifs.default($3,$6,[$9],@1.first_line,@1.last_column);}
+              ;
+
+for_statement : FOR LPAR for_init_opt SEMICOLON e SEMICOLON for_update RPAR LCBRACKET instrucciones RCBRACKET { $$ = new For.default($3,$5,$7,$10,@1.first_line,@1.last_column); }
+                ;
+
+for_init_opt :   variable_assignment    {$$ = $1;}
+                | variable_declaration  {$$ = $1;}
+                ;
+
+for_update :    post_increment { $$ = $1; }
+              | post_decrement { $$ = $1; }
+              | variable_assignment { $$ = $1; }
+              ;
+
+post_increment  : ID PLUSPLUS  { $$ = new Assignment.default($1,new Sum.default(new Identifier.default($1, @1.first_line, @1.last_column),new Literal.default(1,enumType.INTEGER), @1.first_line, @1.last_column),@1.first_line,@1.last_column); }
+                ;
+
+post_decrement  : ID MINUSMINUS { $$ = new Assignment.default($1,new Subtraction.default(new Identifier.default($1, @1.first_line, @1.last_column),new Literal.default(1,enumType.INTEGER), @1.first_line, @1.last_column),@1.first_line,@1.last_column); }
+                ;
+
+pre_increment   : PLUSPLUS ID %prec UMINUS
+                ;
+pre_decrement   : MINUSMINUS ID %prec UMINUS
+                ;
 e
-    : e PLUS e
-        {$$ = $1 + $3;}
-    | e MINUS e
-        {$$ = $1-$3;}
-    | e MULTI e
-        {$$ = $1*$3;}
-    | e DIV e
-        {$$ = $1/$3;}
-    | e POT e
-        {$$ = Math.pow($1, $3);}
-    | e NOT 
-        {{
-          $$ = (function fact (n) { return n==0 ? 1 : fact(n-1) * n })($1);
-        }}
-    | e MOD
-        {$$ = $1/100;}
-    | MINUS e %prec UMINUS  
-        {$$ = -$2;}
-    | LPAR e RPAR 
-        {$$ = $2;}
-    | INTEGER
-        {$$ = Number(yytext);}
-    | E
-        {$$ = Math.E;}
-    | PI
-        {$$ = Math.PI;}
+    : e PLUS e              { $$ = new Sum.default($1, $3, @1.first_line, @1.last_column); }
+    | e MINUS e             { $$ = new Subtraction.default($1, $3, @1.first_line, @1.last_column); }
+    | e MULTI e             { $$ = new Multiplication.default($1, $3, @1.first_line, @1.last_column); }
+    | e DIV e               { $$ = new Division.default($1, $3, @1.first_line, @1.last_column); }
+    | e POT e               { $$ = new Exponentiation.default($1, $3, @1.first_line, @1.last_column);}
+    | e MOD e               { $$ = new Modulus.default($1, $3, @1.first_line, @1.last_column); }
+    | post_increment        { }
+    | post_decrement        {}
+    | pre_increment         {}
+    | pre_decrement         {}
+    | e GREATERTHAN e       { $$ = new GreaterThan.default($1, $3, @1.first_line, @1.last_column); }
+    | e GREATEREQUAL e      { $$ = new GreaterEqual.default($1, $3, @1.first_line, @1.last_column); }
+    | e LESSTHAN e          { $$ = new LessThan.default($1, $3, @1.first_line, @1.last_column); }
+    | e LESSEQUAL e         { $$ = new LessEqual.default($1, $3, @1.first_line, @1.last_column); }
+    | e EQUALTO e           { $$ = new EqualTo.default($1, $3, @1.first_line, @1.last_column); }
+    | e NOTEQUAL e          { $$ = new NotEqual.default($1, $3, @1.first_line, @1.last_column); }
+    | e AND e               { $$ = new And.default($1, $3, @1.first_line, @1.last_column); }
+    | e OR e                { $$ = new Or.default($1, $3, @1.first_line, @1.last_column); }
+    | NOT e                 { $$ = new Not.default($2, @1.first_line, @1.last_column);}
+    | LPAR e RPAR           { $$ = $2; }    
+    | MINUS e %prec UMINUS  { $$ = new Unary.default($2, @1.first_line, @1.last_column);}
+    | INTEGER               { $$ = new Literal.default(Number($1),enumType.INTEGER); }
+    | DOUBLENUM             { $$ = new Literal.default(Number($1),enumType.DOUBLE); }
+    | STRING                { $1 = $1.slice(1,$1.length-1); $$ = new Literal.default($1,enumType.STRING); }
+    | CHAR                  { $1 = $1.slice(1,$1.length-1); $$ = new Literal.default($1,enumType.CHAR); }
+    | ID                    { $$ = new Identifier.default($1, @1.first_line, @1.last_column); }
+    | TRUE                  { $$ = new Literal.default(true,enumType.BOOLEAN); }
+    | FALSE                 { $$ = new Literal.default(false,enumType.BOOLEAN); }
     ;
 

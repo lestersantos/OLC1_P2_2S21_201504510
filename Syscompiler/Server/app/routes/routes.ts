@@ -1,6 +1,9 @@
 import express = require('express');
-import { text } from 'stream/consumers';
-var parser = require('../../src/Analyzer/interpreter').parser;
+import Ast from '../../src/Interpreter/Ast/Ast';
+import Controller from '../../src/Interpreter/Controller';
+import SymbolTable from '../../src/Interpreter/SymbolTable/SymbolTable';
+
+var jisonParser = require('../../src/Analyzer/interpreter').parser;
 
 const router = express.Router();
 
@@ -24,7 +27,7 @@ router.post('/evaluate', (req, res) => {
 
         const input2 = req.body.input;
 
-        let instructionsArray = parser.parse(input2);
+        let instructionsArray = jisonParser.parse(input2);
 
         let response = "";
 
@@ -45,15 +48,20 @@ function readFile() {
 }
 
 function testGrammar(input: string) {
+    
+    const var1 = '"';
+    console.log(var1);
 
     console.log(input);
 
-    let instructionsArray = parser.parse(input);
+    let ast : Ast = jisonParser.parse(input);
 
-    for (let evaluate of instructionsArray) {
-        console.log(`El valor de la expresion es:  ${evaluate.expresion}`);
-    }
+    let controller = new Controller();
+    let global_TableSymbol = new SymbolTable(null);
 
+    ast.execute(controller, global_TableSymbol);
+
+    console.log(controller.consoleMsg);
     console.log("Analisis finalizado");
 }
 

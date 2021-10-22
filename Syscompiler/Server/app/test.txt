@@ -5,10 +5,135 @@
 
 */
 
-Evaluar[((-(1+1+1+1+1-5-10)+(4*3-5^3))+8200*3/10)*3];  
-Evaluar[18-13];  
-Evaluar[8*9+2^3^2];
-Evaluar[3!];
+
+WriteLine("-------- FUNCION WRITELINE -------------");
+writeline("Hola Mundo");
+WriteLine(4+2);
+WriteLine(((-(1+1+1+1+1-5-10)+(4*3-5^3))+8200*3/10)*3);
+
+string var2 = "this is a string with a long string";
+
+int var1 = 8*9+2^3^2;
+
+string a,b,c,d,g = "this is a string with a long string";
+writeline(a);
+writeline(b);
+writeline(c);
+writeline(d);
+writeline(g);
+
+string a = " a";
+
+writeline(var2);
+WriteLine(var1);
+
+WriteLine("-------- FIN DE FUNCION WRITELINE -------------");
+
+WriteLine("-------- FUNCION ASIGNACION -------------");
+
+boolean bool = true;
+writeline("true "+bool);
+
+bool = !true;
+writeline("!true-> "+bool);
+
+int myInt = 20;
+writeline("20-> "+myInt);
+
+myInt = 90;
+writeline("90-> "+myInt);
+
+WriteLine("-------- FIN DE FUNCION ASIGNACION -------------");
+
+WriteLine("-------- FUNCION DECLARACION -------------");
+
+int decl1;
+int decl2;
+int decl3;
+
+WriteLine("-------- FIN FUNCION DECLARACION -------------");
+
+writelinE(" -------------- SENTENCI IF ---------------------");
+
+//writeline(15+8 == 22-10+5*3-4 && 13*0>-1);
+boolean exp = 15+8 == 23;
+
+writeline(15+8 == 23);
+writeline("15+8 == 22-10+5*3-4 && 13*0>-1 " + (15+8 == 22-10+5*3-4 && 13*0>-1));
+
+if (15+8 == 22-10+5*3-4 && 13*0>-1){
+   if (10.0 != 11.0-1.01 ){
+       WriteLine("segunda operacion relacional bien!");
+   }else {
+       WriteLine("segunda operacion relacional mal :c!");
+   }
+}
+
+int condition1 = 20;
+if(condition1 == 30){
+   writeline("If 1");
+}else if(condition1 > 40){
+   writeline(" else if1 ");
+}else if(condition1 < 50){
+   writeline("this condition 20 is minor to 50");
+}
+
+WRITELINE("---------------- FIN SENTENCIA IF ----------------");
+
+writelinE(" -------------- SENTENCIA FOR ---------------------");
+
+for(int a = 0; a < 5 ; a++){
+   writeline("a = " + a);
+}
+
+int i;
+for(i = 0; i < 3; i++ ){
+   WriteLine("i="+i);
+}
+
+for(i=5; i>2;i=i-1 ){
+   WriteLine("i="+i);
+}
+
+string draw = "";
+for(int j = 0; j < 5 ; j++){
+  draw = draw + "------------\n";
+  for(int k = 0; k < 6; k++){
+    draw = draw + "* ";  
+  }
+  draw = draw + "\n";
+}
+
+writeline(draw);
+WRITELINE("---------------- FIN SENTENCIA FOR ----------------");
+/*
+
+string var2 = "this is a string with a long string";
+
+char var3 = 'h' ;
+
+char var4 = '\'' ;
+char var5 = '\\' ;
+char var6 = '\n';
+char var7 = '\t';
+char var8 = '\r';
+char var9 = '\"';
+
+string str  = "this is a string with a long string'";
+
+
+string str4 = " cadena 1 \' con escape" ;
+string str5 = " cadena 2 \\ con escape" ;
+string str6 = " cadena 3 \n con escape";
+string str7 = " cadena 4 \t con escape";
+string str8 = " cadena 5 \r con escape";
+string str9 = " cadena 6 \" con escape";
+
+8*9+2^3^2 ;
+15+8 == 22-10+5*3-4 && 13*0>-1;
+double n2 = ((-(1+1+1+1+1-5-10)+(4*3-n1))+8200*3/10)*3;
+
+*/
 
 //console.log(8*9+2^3^2)
 

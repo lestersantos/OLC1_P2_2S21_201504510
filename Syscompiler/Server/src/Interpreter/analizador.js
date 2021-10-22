@@ -1,5 +1,4 @@
 const fs = require('fs');
-// mymodule.js
 var parser = require("../Analyzer/grammar").parser;
 
 //const thing = require("../Interpreter/Eval");
