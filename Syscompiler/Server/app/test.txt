@@ -86,13 +86,13 @@ for(int a = 0; a < 5 ; a++){
    writeline("a = " + a);
 }
 
-int i;
-for(i = 0; i < 3; i++ ){
-   WriteLine("i="+i);
+int it;
+for(it = 0; it < 3; it++ ){
+   WriteLine("i="+it);
 }
-
-for(i=5; i>2;i=i-1 ){
-   WriteLine("i="+i);
+int it2;
+for(it2=5; it2>2;it2=it2-1 ){
+   WriteLine("it2="+it2);
 }
 
 string draw = "";
@@ -106,6 +106,41 @@ for(int j = 0; j < 5 ; j++){
 
 writeline(draw);
 WRITELINE("---------------- FIN SENTENCIA FOR ----------------");
+
+writelinE(" -------------- SENTENCIA WHILE ---------------------");
+
+
+int whilevar = 0;
+
+while(whilevar < 5){
+
+  writeline(whilevar);
+
+  whilevar++;
+}
+
+double r_sine;
+double x = 3.141592653589793;
+double sin = 0.0;
+
+int fact;
+int i = 1;
+while (i <= 10) {
+  fact = 1;
+  int j2 = 1;
+  while (j2 <= 2 * i - 1) {
+      fact = fact * j2;
+      j2 = j2 + 1;
+  }
+  sin = sin + ((x^(2*i-1)) / fact);
+  i = i + 1;
+}
+r_sine = sin;
+
+writeline("sin-> "+r_sine);
+writeline(3.141592653589793^(2*5-1));
+writeline(0.0 + ((3.141592653589793^(2*5-1)) / 2));
+writelinE(" -------------- FIN SENTENCIA WHILE ---------------------");
 /*
 
 string var2 = "this is a string with a long string";

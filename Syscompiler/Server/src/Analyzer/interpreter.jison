@@ -168,7 +168,11 @@ character   (\'({escape2} | {acceptance2})\')
     const Assignment = require('../Interpreter/Instructions/Assignment');
     const Ifs = require('../Interpreter/Instructions/ControlStatements/Ifs');
     const For = require('../Interpreter/Instructions/LoopStatements/For');
+    const While = require('../Interpreter/Instructions/LoopStatements/While');
     
+    const Break = require('../Interpreter/Instructions/TransferStatements/Break');
+    const Continue = require('../Interpreter/Instructions/TransferStatements/Break');
+    const Return = require('../Interpreter/Instructions/TransferStatements/Break');
 
 
 
@@ -204,6 +208,13 @@ instruccion : writeline            { $$ = $1; }
             | variable_assignment  SEMICOLON { $$ = $1; }
             | if_statement         { $$ = $1; }
             | for_statement        { $$ = $1; }
+            | while_statement      { $$ = $1; }
+            | post_increment  SEMICOLON     { $$ = $1; }
+            | post_decrement  SEMICOLON     { $$ = $1; }
+            | BREAK SEMICOLON      { $$ = new Break.default(); }
+            | CONTINUE SEMICOLON      { $$ = new Break.default(); }
+            | RETURN SEMICOLON      { $$ = new Return.default(null); }
+            | RETURN e SEMICOLON      { $$ = new Return.default($2); }
             ;
 
 variable_declaration  : decl_type id_list EQUAL e  {$$ = new Declaration.default($1,$2,$4,@1.first_line,@1.last_column);}
@@ -244,6 +255,9 @@ for_update :    post_increment { $$ = $1; }
               | variable_assignment { $$ = $1; }
               ;
 
+while_statement : WHILE LPAR e RPAR LCBRACKET instrucciones RCBRACKET { $$ = new While.default($3, $6, @1.first_line, @1.last_column); }
+                  ;
+
 post_increment  : ID PLUSPLUS  { $$ = new Assignment.default($1,new Sum.default(new Identifier.default($1, @1.first_line, @1.last_column),new Literal.default(1,enumType.INTEGER), @1.first_line, @1.last_column),@1.first_line,@1.last_column); }
                 ;
 
@@ -261,8 +275,8 @@ e
     | e DIV e               { $$ = new Division.default($1, $3, @1.first_line, @1.last_column); }
     | e POT e               { $$ = new Exponentiation.default($1, $3, @1.first_line, @1.last_column);}
     | e MOD e               { $$ = new Modulus.default($1, $3, @1.first_line, @1.last_column); }
-    | post_increment        { }
-    | post_decrement        {}
+    | post_increment        { $$ = $1; }
+    | post_decrement        { $$ = $1; }
     | pre_increment         {}
     | pre_decrement         {}
     | e GREATERTHAN e       { $$ = new GreaterThan.default($1, $3, @1.first_line, @1.last_column); }
