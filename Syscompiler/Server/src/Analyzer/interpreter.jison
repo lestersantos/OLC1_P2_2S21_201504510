@@ -140,6 +140,8 @@ character   (\'({escape2} | {acceptance2})\')
 
     const Type = require('../Interpreter/SymbolTable/Type');
     const {enumType} = require('../Interpreter/SymbolTable/Type');
+    const Symbol = require('../Interpreter/SymbolTable/Symbol');
+    const {SymbolType} = require('../Interpreter/SymbolTable/Symbol');
 
     const Division = require('../Interpreter/Expressions/Arithmetic/Division');
     const Multiplication = require('../Interpreter/Expressions/Arithmetic/Multiplication');    
@@ -166,13 +168,19 @@ character   (\'({escape2} | {acceptance2})\')
     const WriteLine = require('../Interpreter/Instructions/WriteLine');
     const Declaration = require('../Interpreter/Instructions/Declaration');
     const Assignment = require('../Interpreter/Instructions/Assignment');
-    const Ifs = require('../Interpreter/Instructions/ControlStatements/Ifs');
     const For = require('../Interpreter/Instructions/LoopStatements/For');
     const While = require('../Interpreter/Instructions/LoopStatements/While');
-    
+
+    const Ifs = require('../Interpreter/Instructions/ControlStatements/Ifs');
+    const Case = require('../Interpreter/Instructions/ControlStatements/Case');
+    const Switch = require('../Interpreter/Instructions/ControlStatements/Switch');
+
     const Break = require('../Interpreter/Instructions/TransferStatements/Break');
-    const Continue = require('../Interpreter/Instructions/TransferStatements/Break');
-    const Return = require('../Interpreter/Instructions/TransferStatements/Break');
+    const Continue = require('../Interpreter/Instructions/TransferStatements/Continue');
+    const Return = require('../Interpreter/Instructions/TransferStatements/Return');
+
+    const Function = require('../Interpreter/Instructions/Function');
+    const Call = require('../Interpreter/Instructions/Call');
 
 
 
@@ -209,9 +217,12 @@ instruccion : writeline            { $$ = $1; }
             | if_statement         { $$ = $1; }
             | for_statement        { $$ = $1; }
             | while_statement      { $$ = $1; }
+            | switch_statement     { $$ = $1; }
             | post_increment  SEMICOLON     { $$ = $1; }
             | post_decrement  SEMICOLON     { $$ = $1; }
-            | BREAK SEMICOLON      { $$ = new Break.default(); }
+            | functions             {$$ = $1; }
+            | func_call SEMICOLON   {$$ = $1; }
+            | BREAK SEMICOLON       { $$ = new Break.default(); }
             | CONTINUE SEMICOLON      { $$ = new Break.default(); }
             | RETURN SEMICOLON      { $$ = new Return.default(null); }
             | RETURN e SEMICOLON      { $$ = new Return.default($2); }
@@ -258,6 +269,38 @@ for_update :    post_increment { $$ = $1; }
 while_statement : WHILE LPAR e RPAR LCBRACKET instrucciones RCBRACKET { $$ = new While.default($3, $6, @1.first_line, @1.last_column); }
                   ;
 
+switch_statement :  SWITCH LPAR e RPAR LCBRACKET case_list RCBRACKET         { $$ = new Switch.default($3, $6, null, @1.first_line, @1.last_column); }
+                  | SWITCH LPAR e RPAR LCBRACKET case_list default RCBRACKET { $$ = new Switch.default($3, $6, $7, @1.first_line, @1.last_column); }
+                  | SWITCH LPAR e RPAR LCBRACKET default RCBRACKET           { $$ = new Switch.default($3, [], $6, @1.first_line, @1.last_column); }
+                  ;
+
+case_list :   case_list case  { $$ = $1; $$.push($2); }
+            | case            { $$ = new Array(); $$.push($1); }
+            ;
+
+case : CASE e COLON instrucciones { $$ = new Case.default($2,$4,@1.first_line, @1.last_column ); }
+      ;
+
+default : DEFAULT COLON instrucciones { $$ = new Case.default(null,$3,@1.first_line, @1.last_column ); }
+          ;
+
+functions : decl_type ID LPAR params_list RPAR LCBRACKET instrucciones RCBRACKET { $$ = new Function.default(SymbolType.FUNCTION,$1,$2,$4,false,$7, @1.first_line, @1.last_column); }
+            | decl_type ID LPAR RPAR LCBRACKET instrucciones RCBRACKET {$$ = new Function.default(SymbolType.FUNCTION,$1,$2,[],false,$6, @1.first_line, @1.last_column);}
+            | VOID ID LPAR params_list RPAR LCBRACKET instrucciones RCBRACKET {$$ = new Function.default(SymbolType.METHOD,$1,$2,$4,true,$7, @1.first_line, @1.last_column);}
+            | VOID ID LPAR RPAR LCBRACKET instrucciones RCBRACKET {$$ = new Function.default(SymbolType.METHOD,$1,$2,[],true,$6, @1.first_line, @1.last_column);}
+            ;
+
+params_list :   params_list COMMA decl_type ID {$$ = $1; $$.push(new Symbol.default(SymbolType.PARAMETER, $3, $4, null)); }
+              | decl_type ID { $$ = new Array(); $$.push(new Symbol.default(SymbolType.PARAMETER, $1, $2, null)); }
+              ;
+
+func_call :   ID LPAR value_List RPAR { $$ = new Call.default($1,$3,@1.first_line, @1.last_column); }
+            | ID LPAR RPAR            { $$ = new Call.default($1,[], @1.first_line, @1.last_column); }
+            ;
+
+value_List :   value_List COMMA e     {$$ = $1; $$.push($3); }
+              | e                     {$$ = new Array(); $$.push($1); }
+             ;
 post_increment  : ID PLUSPLUS  { $$ = new Assignment.default($1,new Sum.default(new Identifier.default($1, @1.first_line, @1.last_column),new Literal.default(1,enumType.INTEGER), @1.first_line, @1.last_column),@1.first_line,@1.last_column); }
                 ;
 
@@ -297,5 +340,6 @@ e
     | ID                    { $$ = new Identifier.default($1, @1.first_line, @1.last_column); }
     | TRUE                  { $$ = new Literal.default(true,enumType.BOOLEAN); }
     | FALSE                 { $$ = new Literal.default(false,enumType.BOOLEAN); }
+    | func_call              {$$ = $1; }
     ;
 

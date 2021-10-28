@@ -39,7 +39,7 @@ export default class Declaration implements Instruction {
 
             if (this.expression != null) {
                 let resExpr = this.expression.getValue(controller, symbolTable);
-
+                console.log("Dec Expression: "+this.expression)
                 let exprType = resExpr.type.getTypeName();
 
                 if (exprType == this.declType.getTypeName()) {
@@ -47,6 +47,7 @@ export default class Declaration implements Instruction {
 
                     symbolTable.add(id, newSymbol);
                 } else {
+                    //Casteos implicitos
                     let error = new SysError("Semantico", `Incompatibilidad ${id}: tipo 
                                     ${this.declType.toString()} no puede asignarse tipo 
                                     ${resExpr.type.toString()}`, this.line, this.column);

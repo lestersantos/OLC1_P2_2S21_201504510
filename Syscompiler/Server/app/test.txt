@@ -141,6 +141,86 @@ writeline("sin-> "+r_sine);
 writeline(3.141592653589793^(2*5-1));
 writeline(0.0 + ((3.141592653589793^(2*5-1)) / 2));
 writelinE(" -------------- FIN SENTENCIA WHILE ---------------------");
+
+WriteLine(" -------------- SENTENCIA SWITCH ---------------------");
+
+/*
+int op = 2;
+
+switch(op){
+   case 1:
+    WriteLine("CASE 1");
+   break;
+   
+   case 2:
+    WriteLine("CASE 2");
+   break;
+   
+   default:
+    WriteLine("DEFAULT CASE");
+   break;
+}
+
+for(int op2 = 0; op2 < 3; op2++){
+   switch(op2){
+      case 0:
+         WriteLine("CASE "+op2);
+      break;
+      case 1:
+         WriteLine("CASE "+op2);
+      break;
+      case 2:
+         WriteLine("CASE "+op2);
+      break;
+      default:
+         WriteLine("DEFAULT CASE");
+      break;
+
+   }
+}
+*/
+for(int op3 = 0; op3 < 3; op3++){
+   WriteLine("op3 " + op3);
+   switch(op3){
+      case 0:
+         WriteLine("CASE "+op3);
+         break;
+      case 1:
+         WriteLine("CASE "+op3);
+      case 2:
+         WriteLine("CASE "+op3);
+      default:
+         WriteLine("DEFAULT CASE");
+      break;
+
+   }
+}
+
+WriteLine(" -------------- FIN SENTENCIA SWITCH ---------------------");
+
+
+Writeline("---------------- FUNCIONES Y METODOS ---------------------");
+
+
+
+int res = sum(10,8);
+
+int sum(int left,int right) {
+  writeline("-- Funcion suma -- ");
+  //writeline(left + right);
+  return left + right;
+}
+
+writeline("resultado Funcion suma: " +res);
+
+
+void display(){
+   writeline("Hello world in display function");
+}
+
+display();
+
+Writeline("---------------- FIN DE FUNCIONES Y METODOS ---------------");
 /*
 
 string var2 = "this is a string with a long string";

@@ -18,11 +18,16 @@ export default class Symbol{
     public id : string;
     public value : any;
 
-    constructor(symbolType : SymbolType, type : Type, id : string, value : any){
+    public paramList : Array<Symbol> | undefined;
+    public isMethod : boolean | undefined;
+
+    constructor(symbolType : SymbolType, type : Type, id : string, value : any, paramList? : Array<Symbol>, isMethod?:boolean){
         this.symbolType = symbolType;
         this.type = type;
         this.id = id;
         this.value = value;
+        this.paramList = paramList;
+        this.isMethod = isMethod;
     }
 
     setValue(value : any){

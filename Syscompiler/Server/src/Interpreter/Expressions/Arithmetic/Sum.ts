@@ -21,6 +21,8 @@ export default class Sum extends Operation {
         let resExp1 = this.exp1.getValue(controller, symbolTable);
         let resExp2 = this.exp2.getValue(controller, symbolTable);
 
+        // console.log("Sum->"+resExp1.type.toString()+" "+resExp1.value);
+        // console.log("Sum->"+resExp1.type.toString()+" "+resExp2.value);
         let typeExp1 = resExp1.type.getTypeName();
         let typeExp2 = resExp2.type.getTypeName();
 

@@ -15,6 +15,8 @@ export default class Return implements Instruction{
     execute(controller: Controller, symbolTable: SymbolTable) {
         
         if (this.returnValue != null) {
+            console.log("Estamos en return");
+            console.log(this.returnValue.getValue(controller,symbolTable));
             return this.returnValue.getValue(controller,symbolTable);
         }else{
             this;

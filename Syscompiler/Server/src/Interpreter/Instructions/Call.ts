@@ -1,0 +1,111 @@
+import AstNode from "../Ast/AstNode";
+import Controller from "../Controller";
+import Literal from "../Expressions/Literal";
+import Expression from "../Interfaces/Expression";
+import { Instruction } from "../Interfaces/Instruction";
+import Symbol from "../SymbolTable/Symbol";
+import SymbolTable from "../SymbolTable/SymbolTable";
+import Type, { enumType } from "../SymbolTable/Type";
+import Function from "./Function";
+
+export default class Call implements Instruction, Expression {
+    type: Type;
+    value: any;
+
+    public identifier: string;
+    public paramList: Array<Expression>;
+    public line: number;
+    public column: number;
+
+    constructor(identifier: string, paramList: Array<Expression>, line: number, column: number) {
+        this.identifier = identifier;
+        this.paramList = paramList;
+        this.line = line;
+        this.column = column;
+        this.type = new Type(enumType.ERROR);
+        this.value = undefined;
+    }
+
+
+
+    validateParameters(callParameters: Array<Expression>, functionParemeters: Array<Symbol>, controller: Controller, st: SymbolTable, st_local: SymbolTable) {
+
+        console.log("Validar parametros");
+
+        if (callParameters.length == functionParemeters.length) {
+
+            let aux: Symbol;
+            let aux_id: string;
+            let aux_type;
+
+            let aux_exp: Expression;
+            let aux_exp_type;
+            let aux_exp_value;
+
+            for (let i = 0; i < callParameters.length; i++) {
+
+                aux = functionParemeters[i] as Symbol;
+                aux_id = aux.id;
+                aux_type = aux.type.getTypeName();
+
+                aux_exp = callParameters[i] as Expression;
+                aux_exp_value = aux_exp.getValue(controller, st);
+                aux_exp_type = aux_exp_value.type.getTypeName();
+
+                if (aux_type == aux_exp_type) {
+                    let newSymbol = new Symbol(aux.symbolType, aux.type, aux_id, aux_exp_value.value);
+                    st_local.add(aux_id, newSymbol);
+                }
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+    getValue(controller: Controller, symbolTable: SymbolTable) : Expression{
+
+        if (symbolTable.exist(this.identifier)) {
+            let st_local = new SymbolTable(symbolTable);
+
+            let functionSymbol = symbolTable.get(this.identifier) as Function;
+
+            // console.log("Funcion como Expresion: "+ functionSymbol.id);
+            // console.log(functionSymbol);
+            if (this.validateParameters(this.paramList, functionSymbol.paramList!, controller, symbolTable, st_local)) {
+                let ret = functionSymbol.execute(controller, st_local);
+
+                if (ret != null) {
+                    return ret;
+                }
+            }
+            return new Literal("Error semantico", enumType.ERROR);
+        } else {
+            return new Literal("Error semantico", enumType.ERROR);
+        }
+    }
+    execute(controller: Controller, symbolTable: SymbolTable) {
+        
+        if (symbolTable.exist(this.identifier)) {
+            let st_local = new SymbolTable(symbolTable);
+
+            let functionSymbol = symbolTable.get(this.identifier) as Function;
+
+            // console.log("Funcion como instruccion: "+ functionSymbol.id);
+            // console.log(functionSymbol);
+            if (this.validateParameters(this.paramList, functionSymbol.paramList!, controller, symbolTable, st_local)) {
+                let ret = functionSymbol.execute(controller, st_local);
+
+                if (ret != null) {
+                    return ret;
+                }
+            }
+        } else {
+
+        }
+    }
+    run(): AstNode {
+        throw new Error("Method not implemented.");
+    }
+
+}
