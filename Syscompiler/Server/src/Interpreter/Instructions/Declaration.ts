@@ -48,13 +48,23 @@ export default class Declaration implements Instruction {
                     symbolTable.add(id, newSymbol);
                 } else {
                     //Casteos implicitos
-                    let error = new SysError("Semantico", `Incompatibilidad ${id}: tipo 
+                    if(this.declType.getTypeName() ==  enumType.DOUBLE && exprType == enumType.INTEGER){
+                        let newSymbol = new Symbol(SymbolType.VARIABLE, this.declType, id, resExpr.value);
+
+                        symbolTable.add(id, newSymbol);
+                    }else if(this.declType.getTypeName() == enumType.INTEGER && exprType == enumType.DOUBLE){
+                        let newSymbol = new Symbol(SymbolType.VARIABLE, this.declType, id, Math.trunc(resExpr.value));
+
+                        symbolTable.add(id, newSymbol);
+                    }else{
+                        let error = new SysError("Semantico", `Incompatibilidad ${id}: tipo 
                                     ${this.declType.toString()} no puede asignarse tipo 
                                     ${resExpr.type.toString()}`, this.line, this.column);
 
                     controller.addError(error);
 
-                    controller.append(` ***ERROR: Incompatibilidad ${id}: tipo ${this.declType.toString()} no puede asignarse tipo ${resExpr.type.toString()}En la linea  ${this.line} y columna ${this.column}`);
+                    controller.append(` ***ERROR: Incompatibilidad ${id}: tipo ${this.declType.toString()} no puede asignarse tipo ${resExpr.type.toString()}. En la linea  ${this.line} y columna ${this.column}`);
+                    }
                 }
             } else {
                 let newSymbol = new Symbol(SymbolType.VARIABLE, this.declType, id, null);

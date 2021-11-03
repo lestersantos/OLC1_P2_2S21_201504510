@@ -1,4 +1,5 @@
 import AstNode from "../Ast/AstNode";
+import SysError from "../Ast/SysError";
 import Controller from "../Controller";
 import Literal from "../Expressions/Literal";
 import Expression from "../Interfaces/Expression";
@@ -55,6 +56,23 @@ export default class Call implements Instruction, Expression {
                 if (aux_type == aux_exp_type) {
                     let newSymbol = new Symbol(aux.symbolType, aux.type, aux_id, aux_exp_value.value);
                     st_local.add(aux_id, newSymbol);
+                } else {
+                    //Casteos implicitos
+                    if (aux_type == enumType.DOUBLE && aux_exp_type == enumType.INTEGER) {
+                        let newSymbol = new Symbol(aux.symbolType, aux.type, aux_id, aux_exp_value.value);
+                        st_local.add(aux_id, newSymbol);
+                    } else if (aux_type == enumType.INTEGER && aux_exp_type == enumType.DOUBLE) {
+                        let newSymbol = new Symbol(aux.symbolType, aux.type, aux_id, Math.trunc(aux_exp_value.value));
+                        st_local.add(aux_id, newSymbol);
+                    } else {
+                        let error = new SysError("Semantico", `Incompatibilidad ${aux_id}: tipo 
+                                    ${aux.type.toString()} no puede asignarse tipo 
+                                    ${aux_exp_value.type.toString()}`, this.line, this.column);
+
+                        controller.addError(error);
+
+                        controller.append(` ***ERROR: Incompatibilidad ${aux_id}: tipo ${aux.type.toString()} no puede asignarse tipo ${aux_exp_value.type.toString()}. En la linea  ${this.line} y columna ${this.column}`);
+                    }
                 }
             }
 
@@ -63,7 +81,7 @@ export default class Call implements Instruction, Expression {
             return false;
         }
     }
-    getValue(controller: Controller, symbolTable: SymbolTable) : Expression{
+    getValue(controller: Controller, symbolTable: SymbolTable): Expression {
 
         if (symbolTable.exist(this.identifier)) {
             let st_local = new SymbolTable(symbolTable);
@@ -79,13 +97,13 @@ export default class Call implements Instruction, Expression {
                     return ret;
                 }
             }
-            return new Literal("Error semantico", enumType.ERROR);
+            return new Literal("Error semantico: llamada", enumType.ERROR);
         } else {
-            return new Literal("Error semantico", enumType.ERROR);
+            return new Literal("Error semantico: llamada", enumType.ERROR);
         }
     }
     execute(controller: Controller, symbolTable: SymbolTable) {
-        
+
         if (symbolTable.exist(this.identifier)) {
             let st_local = new SymbolTable(symbolTable);
 
@@ -105,18 +123,18 @@ export default class Call implements Instruction, Expression {
         }
     }
     run(): AstNode {
-        let parent = new AstNode("Llamada","");
+        let parent = new AstNode("Llamada", "");
 
-        parent.addChild(new AstNode(this.identifier,""));
-        parent.addChild(new AstNode("(",""));
+        parent.addChild(new AstNode(this.identifier, ""));
+        parent.addChild(new AstNode("(", ""));
 
-        let valueChildren = new AstNode("Lista Valores","");
+        let valueChildren = new AstNode("Lista Valores", "");
 
-        for(let val of this.paramList){
+        for (let val of this.paramList) {
             valueChildren.addChild(val.run());
         }
         parent.addChild(valueChildren);
-        parent.addChild(new AstNode(")",""));
+        parent.addChild(new AstNode(")", ""));
         return parent;
     }
 

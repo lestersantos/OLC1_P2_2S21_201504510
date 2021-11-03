@@ -127,7 +127,7 @@ export default class Sum extends Operation {
             }
         }
 
-        return new Literal("Error semantico", enumType.ERROR);
+        return new Literal("Error semantico,no hizo match ningun tipo", enumType.ERROR);
     }
     
 }

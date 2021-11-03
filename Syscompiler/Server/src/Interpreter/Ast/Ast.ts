@@ -4,6 +4,7 @@ import SymbolTable from "../SymbolTable/SymbolTable";
 import Function from "../Instructions/Function";
 import AstNode from "./AstNode";
 import Declaration from "../Instructions/Declaration";
+import StartWith from "../Instructions/StartWith";
 
 export default class Ast implements Instruction {
 
@@ -13,6 +14,8 @@ export default class Ast implements Instruction {
         this.instructionList = instructionList;
     }
     execute(controller: Controller, symbolTable: SymbolTable) {
+
+        let startwithFlag = false;
 
         for (let instruction of this.instructionList) {
             if (instruction instanceof Function) {
@@ -29,7 +32,15 @@ export default class Ast implements Instruction {
         }
 
         for (let instruction of this.instructionList) {
-            if (!(instruction instanceof Function) && !(instruction instanceof Declaration)) {
+
+            if(instruction instanceof StartWith && !startwithFlag){
+                instruction.execute(controller,symbolTable);
+                startwithFlag = true;
+            }else if(startwithFlag){
+                //Solo puede ejecutarse una instruccion start with
+            }
+
+            if (!(instruction instanceof Function) && !(instruction instanceof Declaration)&& !(instruction instanceof StartWith)) {
                 instruction.execute(controller, symbolTable);
             }
         }

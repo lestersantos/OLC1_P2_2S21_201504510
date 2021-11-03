@@ -191,6 +191,7 @@ character   (\'({escape2} | {acceptance2})\')
 
     const Function = require('../Interpreter/Instructions/Function');
     const Call = require('../Interpreter/Instructions/Call');
+    const StartWith = require('../Interpreter/Instructions/StartWith');
 
     const SysError = require('../Interpreter/Ast/SysError');
 
@@ -221,7 +222,8 @@ instrucciones : instrucciones instruccion   { $$ = $1; $$.push($2); }
             | instruccion                   { $$ = new Array(); $$.push($1);}
             ;
 
-instruccion : writeline            { $$ = $1; }
+instruccion : startwith            {$$ = $1}
+            | writeline            { $$ = $1; }
             | variable_declaration SEMICOLON { $$ = $1; }
             | variable_assignment  SEMICOLON { $$ = $1; }
             | if_statement         { $$ = $1; }
@@ -247,7 +249,7 @@ instruccion : writeline            { $$ = $1; }
             ;
 
 variable_declaration  : decl_type id_list EQUAL e  {$$ = new Declaration.default($1,$2,$4,@1.first_line,@1.last_column);}
-                      | decl_type id_list  {$$ = new Declaration.default($1,$2,null,@1.first_line,@1.last_column);}
+                      | decl_type id_list  {$$ = new Declaration.default($1,$2,null,@1.first_line,@1.last_column);}                      
                       ;
 
 id_list : id_list COMMA ID {$$ = $1; $$.push($3); }
@@ -332,6 +334,9 @@ pre_decrement   : MINUSMINUS ID %prec UMINUS
 
 ternary : e QMARK e COLON e { $$ = new Ternary.default($1, $3, $5, @1.first_line, @1.last_column); }
           ;
+
+startwith :   START WITH func_call SEMICOLON {$$ = new StartWith.default($3,@1.first_line, @1.last_column);}
+            ;
 e
     : e PLUS e              { $$ = new Sum.default($1, $3, @1.first_line, @1.last_column); }
     | e MINUS e             { $$ = new Subtraction.default($1, $3, @1.first_line, @1.last_column); }

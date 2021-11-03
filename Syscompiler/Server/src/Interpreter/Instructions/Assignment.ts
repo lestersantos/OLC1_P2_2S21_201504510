@@ -4,6 +4,7 @@ import Controller from "../Controller";
 import Expression from "../Interfaces/Expression";
 import { Instruction } from "../Interfaces/Instruction";
 import SymbolTable from "../SymbolTable/SymbolTable";
+import { enumType } from "../SymbolTable/Type";
 
 export default class Assignment implements Instruction {
 
@@ -29,9 +30,16 @@ export default class Assignment implements Instruction {
             if (variable?.type.getTypeName() == resExpr.type.getTypeName()) {
                 variable.setValue(resExpr.value);
             } else {
-                let error = new SysError("Semantico", `Incompatibilidad ${this.identifier}: tipo ${variable?.type.toString()} no puede asignarse tipo ${resExpr.type.toString()}`, this.line, this.column);
-                controller.addError(error);
-                controller.append(` ***ERROR: Incompatibilidad ${this.identifier}: tipo ${variable?.type.toString()} no puede asignarse tipo ${resExpr.type.toString()}En la linea  ${this.line} y columna ${this.column}`);
+                if (variable?.type.getTypeName() == enumType.DOUBLE && resExpr.type.getTypeName() == enumType.INTEGER) {
+                    variable.setValue(resExpr.value);
+                } else if (variable?.type.getTypeName() == enumType.INTEGER && resExpr.type.getTypeName() == enumType.DOUBLE) {
+                    variable.setValue(Math.trunc(resExpr.value));
+                } else {
+                    let error = new SysError("Semantico", `Incompatibilidad ${this.identifier}: tipo ${variable?.type.toString()} no puede asignarse tipo ${resExpr.type.toString()}`, this.line, this.column);
+                    controller.addError(error);
+                    controller.append(` ***ERROR: Incompatibilidad ${this.identifier}: tipo ${variable?.type.toString()} no puede asignarse tipo ${resExpr.type.toString()}En la linea  ${this.line} y columna ${this.column}`);
+                }
+
             }
         } else {
             let error = new SysError("Semantico", `La variable ${this.identifier} no existe en la tabla de simbolos `, this.line, this.column);
@@ -41,10 +49,10 @@ export default class Assignment implements Instruction {
     }
 
     run(): AstNode {
-        let parent = new AstNode("Asignacion","");
+        let parent = new AstNode("Asignacion", "");
 
-        let child = new AstNode("Identificador","")
-        child.addChild(new AstNode(this.identifier,""));
+        let child = new AstNode("Identificador", "")
+        child.addChild(new AstNode(this.identifier, ""));
         parent.addChild(child);
         parent.addChild(this.expression.run());
 
