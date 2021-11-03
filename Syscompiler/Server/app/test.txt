@@ -221,6 +221,8 @@ void display(){
 display();
 
 Writeline("---------------- FIN DE FUNCIONES Y METODOS ---------------");
+
+
 /*
 
 string var2 = "this is a string with a long string";

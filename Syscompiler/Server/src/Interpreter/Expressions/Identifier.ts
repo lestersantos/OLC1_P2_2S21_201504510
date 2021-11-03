@@ -32,7 +32,9 @@ export default class Identifier implements Expression{
         }
     }
     run(): AstNode {
-        throw new Error("Method not implemented.");
+        let parent = new AstNode("Identificador","");
+        parent.addChild(new AstNode(this.id,""));
+        return parent;
     }
 
 }

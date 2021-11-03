@@ -7,6 +7,7 @@ import SymbolTable from "../../SymbolTable/SymbolTable";
 import { enumType } from "../../SymbolTable/Type";
 import Break from "../TransferStatements/Break";
 import Continue from "../TransferStatements/Continue";
+import Return from "../TransferStatements/Return";
 
 export default class While implements Instruction {
 
@@ -28,18 +29,26 @@ export default class While implements Instruction {
         controller.setIsLoopStmt(true);
 
         if (this.expression.getValue(controller, symbolTable).type.getTypeName() == enumType.BOOLEAN) {
-            next:
+            siguiente:
             while (this.expression.getValue(controller, symbolTable).value == true) {
                 let st_Local = new SymbolTable(symbolTable);
                 for(let inst of this.instructionList){
                     let ret = inst.execute(controller,st_Local);
                     if (ret instanceof Break) {
-                        controller.setIsLoopStmt(true);
+                        controller.setIsLoopStmt(temp);
                         return ret;
                     }
 
                     if(ret instanceof Continue){
-                        continue next;
+                        continue siguiente;
+                    }
+
+                    if (ret instanceof Return) {
+                        return ret;
+                    }
+
+                    if (ret != null) {
+                        return ret;
                     }
                 }
             }
@@ -49,10 +58,33 @@ export default class While implements Instruction {
             controller.addError(error);
             controller.append(` ***ERROR: Se esperaba expresion booleana. Se econtro ${this.expression.type}. En la linea ${this.line} y columna ${this.column}`);
         }
+        controller.setIsLoopStmt(temp);
+        return null;
     }
 
     run(): AstNode {
-        throw new Error("Method not implemented.");
+        let parent = new AstNode("Sentencia While","");
+
+        parent.addChild(new AstNode("While",""));
+        parent.addChild(new AstNode("(",""));
+
+        let childConditon = new AstNode("Condicion","");
+        childConditon.addChild(this.expression.run());
+        parent.addChild(childConditon);
+
+        parent.addChild(new AstNode(")",""));
+
+        parent.addChild(new AstNode("{",""));
+
+        let instChild = new AstNode("Instrucciones","");
+        for(let inst of this.instructionList){
+            instChild.addChild(inst.run());
+        }
+        parent.addChild(instChild);
+
+        parent.addChild(new AstNode("}",""));
+
+        return parent;
     }
 
 }

@@ -3,7 +3,7 @@ import Symbol  from "./Symbol";
 export default class SymbolTable {
 
     public previousST: SymbolTable;
-    public currentST: Map<String, Symbol>;
+    public currentST: Map<string, Symbol>;
 
     constructor(previousST: SymbolTable | any) {
         this.previousST = previousST;

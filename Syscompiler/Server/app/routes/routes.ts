@@ -1,7 +1,9 @@
 import express = require('express');
 import Ast from '../../src/Interpreter/Ast/Ast';
+import AstNode from '../../src/Interpreter/Ast/AstNode';
 import Controller from '../../src/Interpreter/Controller';
 import SymbolTable from '../../src/Interpreter/SymbolTable/SymbolTable';
+import { errorList } from "../../src/Interpreter/Ast/ErrorList";
 
 var jisonParser = require('../../src/Analyzer/interpreter').parser;
 
@@ -9,9 +11,9 @@ const router = express.Router();
 
 const fs = require('fs');
 
-const dataBuffer = readFile();
+//const dataBuffer = readFile();
 
-testGrammar(dataBuffer.toString());
+//testGrammar(dataBuffer.toString());
 
 router.get('/', (req, res) => {
     res.send("Hello Express rom routes.ts file!");
@@ -21,40 +23,61 @@ router.get('/help', (req, res) => {
     res.send('Help page');
 })
 
-router.post('/evaluate', (req, res) => {
+router.post('/traversalAST', function(req, res){
+    try{
+        const {input} = req.body;
+
+        let ast : Ast = jisonParser.parse(input);
+
+        let astTree : AstNode = ast.run();
+        let graph = astTree.graphSyntactic();
+
+        res.status(200).json({ast : graph});
+    }catch(error){
+        console.log(error);
+        res.status(500).json({ast : "Se ha producido un error al generar el ast"});
+    }
+})
+
+router.post('/run-compiler', (req, res) => {
     try {
         const { input } = req.body;
 
-        const input2 = req.body.input;
+        errorList.SysError = []
+        let ast: Ast = jisonParser.parse(input);
 
-        let instructionsArray = jisonParser.parse(input2);
+        let controller = new Controller();
+        let global_TableSymbol = new SymbolTable(null);
 
-        let response = "";
+        ast.execute(controller, global_TableSymbol);
 
-        for (let evaluate of instructionsArray) {
-            console.log(`El valor de la expresion es:  ${evaluate.expresion}`);
-            response += `El valor de la expresion es:  ${evaluate.expresion} `;
-        }
-        res.status(200).json({ resultado: response });
+        //console.log(controller.consoleMsg);
+        
+        let st_html = controller.graphSymbolTable(controller, global_TableSymbol);
+        let err_html = controller.graphErrorsTable(controller);
+
+        res.status(200).json({consoleMsg : controller.consoleMsg, st : st_html, errTable : err_html});
+
+        console.log("Analisis finalizado");
     } catch (error) {
         console.log(error);
-        res.status(500).json({ resultado: "Se ha producido un error al analizar la cadena" });
+        res.status(500).json({ resultado: "Se ha producido un error al correr el interprete" });
     }
 })
 
 function readFile() {
-    const text = fs.readFileSync('\app\\test.txt');
+    const text = fs.readFileSync('\app\\ArchivoPrueba.txt');
     return text;
 }
 
 function testGrammar(input: string) {
-    
+
     const var1 = '"';
     console.log(var1);
 
     console.log(input);
 
-    let ast : Ast = jisonParser.parse(input);
+    let ast: Ast = jisonParser.parse(input);
 
     let controller = new Controller();
     let global_TableSymbol = new SymbolTable(null);

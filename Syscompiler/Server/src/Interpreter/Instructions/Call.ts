@@ -30,7 +30,7 @@ export default class Call implements Instruction, Expression {
 
     validateParameters(callParameters: Array<Expression>, functionParemeters: Array<Symbol>, controller: Controller, st: SymbolTable, st_local: SymbolTable) {
 
-        console.log("Validar parametros");
+        //console.log("Validar parametros");
 
         if (callParameters.length == functionParemeters.length) {
 
@@ -105,7 +105,19 @@ export default class Call implements Instruction, Expression {
         }
     }
     run(): AstNode {
-        throw new Error("Method not implemented.");
+        let parent = new AstNode("Llamada","");
+
+        parent.addChild(new AstNode(this.identifier,""));
+        parent.addChild(new AstNode("(",""));
+
+        let valueChildren = new AstNode("Lista Valores","");
+
+        for(let val of this.paramList){
+            valueChildren.addChild(val.run());
+        }
+        parent.addChild(valueChildren);
+        parent.addChild(new AstNode(")",""));
+        return parent;
     }
 
 }

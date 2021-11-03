@@ -41,6 +41,13 @@ export default class Assignment implements Instruction {
     }
 
     run(): AstNode {
-        throw new Error("Method not implemented.");
+        let parent = new AstNode("Asignacion","");
+
+        let child = new AstNode("Identificador","")
+        child.addChild(new AstNode(this.identifier,""));
+        parent.addChild(child);
+        parent.addChild(this.expression.run());
+
+        return parent;
     }
 }

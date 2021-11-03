@@ -3,6 +3,7 @@ import { Instruction } from "../Interfaces/Instruction";
 import SymbolTable from "../SymbolTable/SymbolTable";
 import Function from "../Instructions/Function";
 import AstNode from "./AstNode";
+import Declaration from "../Instructions/Declaration";
 
 export default class Ast implements Instruction {
 
@@ -21,14 +22,26 @@ export default class Ast implements Instruction {
             }
         }
 
+        for(let instruction of this.instructionList){
+            if(instruction instanceof Declaration){
+                instruction.execute(controller,symbolTable);
+            }
+        }
+
         for (let instruction of this.instructionList) {
-            if (!(instruction instanceof Function)) {
+            if (!(instruction instanceof Function) && !(instruction instanceof Declaration)) {
                 instruction.execute(controller, symbolTable);
             }
         }
     }
     run(): AstNode {
-        throw new Error("Method not implemented.");
+        let root = new AstNode("INICIO", "");
+
+        for(let inst of this.instructionList){
+            root.addChild(inst.run());
+        }
+
+        return root;
     }
 
 }

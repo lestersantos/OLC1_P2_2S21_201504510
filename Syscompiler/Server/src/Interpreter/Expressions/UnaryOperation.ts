@@ -10,6 +10,7 @@ export default abstract class UnaryOperation implements Expression{
     public column : number;
     public type: Type;
     public value: any;
+    public operatorSign : string;
 
     constructor(exp1 : Expression, line : number, column : number){
         this.exp1 = exp1;
@@ -17,8 +18,16 @@ export default abstract class UnaryOperation implements Expression{
         this.column = column;
         this.type = new Type(enumType.ERROR);    
         this.value = undefined;
+        this.operatorSign = "";
     }
     abstract  getValue(controller: Controller, symbolTable: SymbolTable): Expression;
 
-    abstract run() : AstNode;
+    run() : AstNode{
+        let parent = new AstNode("Exp","");
+
+        parent.addChild(new AstNode(this.operatorSign, ""));
+        parent.addChild(this.exp1.run());
+
+        return parent;
+    }
 }

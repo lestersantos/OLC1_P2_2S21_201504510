@@ -42,7 +42,9 @@ export default class Literal implements Expression {
         return new Literal(this.value,this.getType().getTypeName());
     }
     run(): AstNode {
-        throw new Error("Method not implemented.");
+        let parent = new AstNode("Literal","");
+        parent.addChild(new AstNode(this.value.toString(),""));
+        return parent;
     }
 
 

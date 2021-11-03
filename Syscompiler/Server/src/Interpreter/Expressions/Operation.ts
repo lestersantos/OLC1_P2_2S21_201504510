@@ -11,6 +11,7 @@ export default abstract class Operation implements Expression{
     public column : number;
     public type: Type;
     public value: any;
+    public operatorSign : string;
 
     constructor(exp1 : Expression, exp2 : Expression, line : number, column : number){
         this.exp1 = exp1;
@@ -19,10 +20,18 @@ export default abstract class Operation implements Expression{
         this.column = column;
         this.type = new Type(enumType.ERROR);    
         this.value = undefined;
+        this.operatorSign = "";
     }
     abstract  getValue(controller: Controller, symbolTable: SymbolTable): Expression;
 
-    abstract run() : AstNode;
+    run() : AstNode{
+        let parent = new AstNode("Exp","");
 
+        parent.addChild(this.exp1.run());
+        parent.addChild(new AstNode(this.operatorSign,""));
+        parent.addChild(this.exp2.run());
+    
+        return parent;
+    }
 
 }

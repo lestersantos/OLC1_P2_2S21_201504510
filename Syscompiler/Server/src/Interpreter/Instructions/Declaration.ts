@@ -39,7 +39,7 @@ export default class Declaration implements Instruction {
 
             if (this.expression != null) {
                 let resExpr = this.expression.getValue(controller, symbolTable);
-                console.log("Dec Expression: "+this.expression)
+                //console.log("Dec Expression: "+this.expression)
                 let exprType = resExpr.type.getTypeName();
 
                 if (exprType == this.declType.getTypeName()) {
@@ -76,6 +76,28 @@ export default class Declaration implements Instruction {
     }
 
     run(): AstNode {
-        throw new Error("Method not implemented.");
+        let parent = new AstNode("Declaracion","");
+
+        let typeChild = new AstNode("Tipo","");
+
+        typeChild.addChild(new AstNode(this.declType.toString()!,""));
+
+        parent.addChild(typeChild);
+
+        let idListChild = new AstNode("ID's","");
+
+
+        for(let id of this.idList){
+            idListChild.addChild(new AstNode(id,""));
+        }
+
+        parent.addChild(idListChild);
+        
+        parent.addChild(new AstNode("=",""));
+        
+        if (this.expression != null) {
+            parent.addChild(this.expression.run());
+        }
+        return parent;
     }
 }

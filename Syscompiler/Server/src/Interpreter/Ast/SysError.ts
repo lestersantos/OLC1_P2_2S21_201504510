@@ -1,3 +1,4 @@
+import { errorList } from "./ErrorList";
 
 export default class SysError{
 
@@ -11,6 +12,9 @@ export default class SysError{
         this.description = description;
         this.line = line;
         this.column = column;
+        if(errorType == "Sintactico"|| errorType == "Lexico"){
+            errorList.SysError.push(this);
+        }
     }
 
 }

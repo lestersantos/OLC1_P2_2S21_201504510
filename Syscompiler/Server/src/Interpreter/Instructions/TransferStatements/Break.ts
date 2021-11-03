@@ -14,6 +14,8 @@ export default class Break implements Instruction{
     }
 
     run(): AstNode {
-        throw new Error("Method not implemented.");
+        let parent = new AstNode("Instruccion","");
+        parent.addChild(new AstNode("Break",""))
+        return parent;
     }
 }

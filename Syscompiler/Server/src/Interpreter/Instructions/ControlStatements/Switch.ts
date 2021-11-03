@@ -60,6 +60,32 @@ export default class Switch implements Instruction{
         }
     }
     run(): AstNode {
-        throw new Error("Method not implemented.");
+        let parent = new AstNode("Sentencia Switch","");
+        
+        parent.addChild(new AstNode("Switch",""));
+        parent.addChild(new AstNode("(",""));
+
+        parent.addChild(this.expression.run());
+
+        parent.addChild(new AstNode(")",""));
+
+        parent.addChild(new AstNode("{",""));
+
+        let caseListChild = new AstNode("Casos","");
+
+        for(let swcase of this.caseList){
+            caseListChild.addChild(swcase.run());
+        }
+        parent.addChild(caseListChild);
+        if(this.defaultCase != null){
+            let defaultCaseChild = new AstNode("Default","");
+            defaultCaseChild.addChild(this.defaultCase.run());
+            parent.addChild(defaultCaseChild);
+        }
+
+        
+        parent.addChild(new AstNode("}",""));
+        
+        return parent;
     }
 }

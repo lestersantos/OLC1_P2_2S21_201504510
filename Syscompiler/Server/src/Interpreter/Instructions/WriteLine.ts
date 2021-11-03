@@ -21,10 +21,23 @@ export default class WriteLine implements Instruction {
         if (typeExp1 != enumType.ERROR) {
             
             console.log(this.expression.getValue(controller, symbolTable).value);
+            controller.append(this.expression.getValue(controller, symbolTable).value);
         }
     }
     run(): AstNode {
-        throw new Error("Method not implemented.");
+        let parent = new AstNode("WriteLine","");
+
+        parent.addChild(new AstNode("WriteLine",""));
+        parent.addChild(new AstNode("(",""));
+
+        let child = new AstNode("exp","");
+
+        child.addChild(this.expression.run());
+
+        parent.addChild(child);
+        parent.addChild(new AstNode(")",""));
+
+        return parent;
     }
 
 }

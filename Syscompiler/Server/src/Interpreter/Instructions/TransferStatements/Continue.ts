@@ -13,7 +13,9 @@ export default class Continue implements Instruction{
         return this;
     }
     run(): AstNode {
-        throw new Error("Method not implemented.");
+        let parent = new AstNode("Instruccion","");
+        parent.addChild(new AstNode("Continue",""))
+        return parent;
     }
 
 }

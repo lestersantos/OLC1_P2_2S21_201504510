@@ -9,6 +9,7 @@ import Operation from "../Operation";
 export default class Multiplication extends Operation{
     constructor(exp1: Expression, exp2: Expression, line: number, column: number) {
         super(exp1, exp2, line, column);
+        this.operatorSign = "*";
     }
     
     getValue(controller: Controller, symbolTable: SymbolTable): Expression {
@@ -64,9 +65,5 @@ export default class Multiplication extends Operation{
 
         return new Literal("Error semantico", enumType.ERROR);
     }
-    run(): AstNode {
-        throw new Error("Method not implemented.");
-    }
-
 
 }

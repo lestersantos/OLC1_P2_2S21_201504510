@@ -11,6 +11,7 @@ export default class Sum extends Operation {
 
     constructor(exp1: Expression, exp2: Expression, line: number, column: number) {
         super(exp1, exp2, line, column);
+        this.operatorSign = "+";
     }
 
     getType(controller: Controller, symbolTable: SymbolTable): Type {
@@ -128,8 +129,5 @@ export default class Sum extends Operation {
 
         return new Literal("Error semantico", enumType.ERROR);
     }
-    run(): AstNode {
-        throw new Error("Method not implemented.");
-    }
-
+    
 }

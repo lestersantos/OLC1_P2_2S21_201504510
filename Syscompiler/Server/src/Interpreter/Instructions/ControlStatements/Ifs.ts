@@ -89,10 +89,40 @@ export default class If implements Instruction {
                 }
             }
         }
+        return null;
     }
     run(): AstNode {
-        throw new Error("Method not implemented.");
+        let parent = new AstNode("Sentencia If", "");
+
+        parent.addChild(new AstNode("If", ""));
+
+        parent.addChild(new AstNode("(", ""));
+
+        let ifConditionChild = new AstNode("Condicion", "");
+
+        ifConditionChild.addChild(this.expression.run());
+        parent.addChild(ifConditionChild);
+        parent.addChild(new AstNode(")", ""));
+        parent.addChild(new AstNode("{", ""));
+
+        let instChild = new AstNode("Instrucciones", "");
+        for (let inst of this.ifInstructionList) {
+            instChild.addChild(inst.run());
+        }
+        parent.addChild(instChild);
+
+        parent.addChild(new AstNode("}", ""));
+
+        if (this.elseInstructionList.length > 0) {
+            let elseChild = new AstNode("Sentencia Else","");
+
+            for (let inst of this.elseInstructionList) {
+                elseChild.addChild(inst.run());
+            }
+
+            parent.addChild(elseChild);
+        }
+
+        return parent;
     }
-
-
 }

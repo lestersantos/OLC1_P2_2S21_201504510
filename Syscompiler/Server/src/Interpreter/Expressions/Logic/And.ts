@@ -10,6 +10,7 @@ export default class And extends Operation {
 
     constructor(exp1: Expression, exp2: Expression, line: number, column: number) {
         super(exp1, exp2, line, column);
+        this.operatorSign = "&&";
     }
 
     getType(controller: Controller, symbolTable: SymbolTable): Type {
@@ -35,8 +36,4 @@ export default class And extends Operation {
 
         return new Literal("Error semantico", enumType.ERROR);
     }
-    run(): AstNode {
-        throw new Error("Method not implemented.");
-    }
-
 }

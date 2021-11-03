@@ -4,26 +4,32 @@ import Expression from "../../Interfaces/Expression";
 import { Instruction } from "../../Interfaces/Instruction";
 import SymbolTable from "../../SymbolTable/SymbolTable";
 
-export default class Return implements Instruction{
-    
-    public returnValue : Expression;
+export default class Return implements Instruction {
 
-    constructor(returnValue : Expression){
+    public returnValue: Expression;
+
+    constructor(returnValue: Expression) {
         this.returnValue = returnValue;
     }
 
     execute(controller: Controller, symbolTable: SymbolTable) {
-        
+
         if (this.returnValue != null) {
-            console.log("Estamos en return");
-            console.log(this.returnValue.getValue(controller,symbolTable));
-            return this.returnValue.getValue(controller,symbolTable);
-        }else{
+            //console.log("Estamos en return");
+            //console.log(this.returnValue.getValue(controller,symbolTable));
+            return this.returnValue.getValue(controller, symbolTable);
+        } else {
             this;
         }
     }
-    
+
     run(): AstNode {
-        throw new Error("Method not implemented.");
+        let parent = new AstNode("Instruccion", "");
+        parent.addChild(new AstNode("Return", ""))
+        if (this.returnValue != null) {
+            parent.addChild(this.returnValue.run());
+            return parent;
+        }
+        return parent;
     }
 }

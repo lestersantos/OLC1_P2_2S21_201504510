@@ -31,9 +31,22 @@ export default class Case implements Instruction {
         }
     }
     run(): AstNode {
-        throw new Error("Method not implemented.");
+        let parent = new AstNode("Caso","");
+
+        parent.addChild(new AstNode("Case",""));
+        if(this.expression != null){
+            parent.addChild(this.expression.run());
+        }
+        
+        parent.addChild(new AstNode(":",""));
+
+        let instChild = new AstNode("Instrucciones","");
+        for(let inst of this.instructionList){
+            instChild.addChild(inst.run());
+        }
+        parent.addChild(instChild);
+
+        return parent;
+
     }
-
-
-
 }

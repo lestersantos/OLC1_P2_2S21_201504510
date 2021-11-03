@@ -60,6 +60,36 @@ export default class For implements Instruction{
         return null;
     }
     run(): AstNode {
-        throw new Error("Method not implemented.");
+        let parent = new AstNode("Sentencia For","");
+
+        parent.addChild(new AstNode("For",""));
+        parent.addChild(new AstNode("(",""));
+        
+        let initialization = new AstNode("Inicializacion","");
+
+        initialization.addChild(this.for_Initialization.run());
+
+        parent.addChild(initialization);
+
+        let childConditon = new AstNode("Condicion","");
+        childConditon.addChild(this.condition.run());
+        parent.addChild(childConditon);
+
+        let update = new AstNode("Actualizacion","");
+        update.addChild(this.for_Update.run());
+        
+        parent.addChild(update);
+        parent.addChild(new AstNode(")",""));
+
+        parent.addChild(new AstNode("{",""));
+
+        let instChild = new AstNode("Instrucciones","");
+        for(let inst of this.instruction_List){
+            instChild.addChild(inst.run());
+        }
+        parent.addChild(instChild);
+        parent.addChild(new AstNode("}",""));
+
+        return parent;
     }
 }

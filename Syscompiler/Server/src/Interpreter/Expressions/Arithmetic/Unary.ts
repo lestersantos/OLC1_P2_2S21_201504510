@@ -9,6 +9,7 @@ import UnaryOperation from "../UnaryOperation";
 export default class Unary extends UnaryOperation {
     constructor(exp1: Expression, line: number, column: number) {
         super(exp1, line, column);
+        this.operatorSign = "-";
     }
 
     getValue(controller: Controller, symbolTable: SymbolTable): Expression {
@@ -26,9 +27,6 @@ export default class Unary extends UnaryOperation {
         }
 
         return new Literal("Error semantico", enumType.ERROR);
-    }
-    run(): AstNode {
-        throw new Error("Method not implemented.");
     }
 
 }

@@ -130,7 +130,15 @@ character   (\'({escape2} | {acceptance2})\')
 
 
 <<EOF>>               return 'EOF'
-.                     return 'ERROR'
+.                     { console.log("Error Lexico "+yytext
+                        +" linea: "+yylineno
+                        +" columna: "+(yylloc.last_column+1));
+
+                      new SysError.default("Lexico"," El caracter "+ yytext 
+                      +" no forma parte del lenguaje ",
+                      yylineno + 1,
+                      yylloc.last_column+1);
+                      }
 
 /lex
 
@@ -171,6 +179,8 @@ character   (\'({escape2} | {acceptance2})\')
     const For = require('../Interpreter/Instructions/LoopStatements/For');
     const While = require('../Interpreter/Instructions/LoopStatements/While');
 
+    const Ternary = require('../Interpreter/Expressions/Ternary'); 
+
     const Ifs = require('../Interpreter/Instructions/ControlStatements/Ifs');
     const Case = require('../Interpreter/Instructions/ControlStatements/Case');
     const Switch = require('../Interpreter/Instructions/ControlStatements/Switch');
@@ -182,12 +192,12 @@ character   (\'({escape2} | {acceptance2})\')
     const Function = require('../Interpreter/Instructions/Function');
     const Call = require('../Interpreter/Instructions/Call');
 
-
+    const SysError = require('../Interpreter/Ast/SysError');
 
 %}
 /* operator associations and precedence */
 // LOWER TO HIGHER PRECEDENCCE
-
+%right 'QMARK'
 %left 'OR'
 %left 'AND'
 
@@ -223,9 +233,17 @@ instruccion : writeline            { $$ = $1; }
             | functions             {$$ = $1; }
             | func_call SEMICOLON   {$$ = $1; }
             | BREAK SEMICOLON       { $$ = new Break.default(); }
-            | CONTINUE SEMICOLON      { $$ = new Break.default(); }
+            | CONTINUE SEMICOLON      { $$ = new Continue.default(); }
             | RETURN SEMICOLON      { $$ = new Return.default(null); }
             | RETURN e SEMICOLON      { $$ = new Return.default($2); }
+            | error                 { console.log("Error Sintactico "+yytext + 
+                                                  " linea: "+this._$.first_line + 
+                                                  " columna: "+this._$.first_column);
+            
+                                     new SysError.default("Sintactico","No se esperaba el caracter "+yytext , 
+                                     this._$.first_line, this._$.first_column);
+            
+                                     }
             ;
 
 variable_declaration  : decl_type id_list EQUAL e  {$$ = new Declaration.default($1,$2,$4,@1.first_line,@1.last_column);}
@@ -311,6 +329,9 @@ pre_increment   : PLUSPLUS ID %prec UMINUS
                 ;
 pre_decrement   : MINUSMINUS ID %prec UMINUS
                 ;
+
+ternary : e QMARK e COLON e { $$ = new Ternary.default($1, $3, $5, @1.first_line, @1.last_column); }
+          ;
 e
     : e PLUS e              { $$ = new Sum.default($1, $3, @1.first_line, @1.last_column); }
     | e MINUS e             { $$ = new Subtraction.default($1, $3, @1.first_line, @1.last_column); }
@@ -340,6 +361,8 @@ e
     | ID                    { $$ = new Identifier.default($1, @1.first_line, @1.last_column); }
     | TRUE                  { $$ = new Literal.default(true,enumType.BOOLEAN); }
     | FALSE                 { $$ = new Literal.default(false,enumType.BOOLEAN); }
-    | func_call              {$$ = $1; }
+    | func_call             {$$ = $1; }
+    | ternary               {$$ = $1; }
+    | TYPEOF LPAR e RPAR    {$$ = new TypeOf.default($3,@1.first_line, @1.last_column); }
     ;
 
