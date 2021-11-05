@@ -32,6 +32,7 @@ export default class If implements Instruction {
         if (ifConditionValue.type.getTypeName() == enumType.BOOLEAN) {
             if (ifConditionValue.value == true) {
                 for (let inst of this.ifInstructionList) {
+                    console.log("instruccion en if: "+inst);
                     let ret = inst.execute(controller, st_Local);
                     if (ret instanceof Break) {
                         if (controller.isLoopStmt() == true) {
@@ -56,6 +57,7 @@ export default class If implements Instruction {
                     }
 
                     if (ret instanceof Return) {
+                        console.log("encontro return");
                         return ret;
                     }
 
@@ -80,6 +82,7 @@ export default class If implements Instruction {
                     }
 
                     if (ret instanceof Return) {
+                        console.log("encontro return en else");
                         return ret;
                     }
 

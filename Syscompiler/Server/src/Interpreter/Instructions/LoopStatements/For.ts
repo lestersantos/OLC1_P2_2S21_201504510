@@ -57,6 +57,7 @@ export default class For implements Instruction{
                         continue siguiente;
                     }   
                     if (ret instanceof Return) {
+                        
                         return ret;
                     }
 

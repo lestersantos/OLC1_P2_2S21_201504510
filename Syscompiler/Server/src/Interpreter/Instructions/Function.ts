@@ -4,6 +4,7 @@ import { Instruction } from "../Interfaces/Instruction";
 import Symbol, { SymbolType } from "../SymbolTable/Symbol";
 import SymbolTable from "../SymbolTable/SymbolTable";
 import Type from "../SymbolTable/Type";
+import Return from "./TransferStatements/Return";
 
 export default class Function extends Symbol implements Instruction {
 
@@ -35,6 +36,10 @@ export default class Function extends Symbol implements Instruction {
         for (let inst of this.instructionList) {
             let ret = inst.execute(controller, st_local);
 
+            if (ret instanceof Return) {
+                console.log("encontro return en funcion. se termina la funcion");
+                break;
+            }
             if (ret != null) {
                 return ret;
             }

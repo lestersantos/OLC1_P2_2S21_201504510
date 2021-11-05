@@ -8,6 +8,7 @@ import Symbol from "../SymbolTable/Symbol";
 import SymbolTable from "../SymbolTable/SymbolTable";
 import Type, { enumType } from "../SymbolTable/Type";
 import Function from "./Function";
+import Return from "./TransferStatements/Return";
 
 export default class Call implements Instruction, Expression {
     type: Type;
@@ -109,11 +110,11 @@ export default class Call implements Instruction, Expression {
 
             let functionSymbol = symbolTable.get(this.identifier) as Function;
 
-            // console.log("Funcion como instruccion: "+ functionSymbol.id);
-            // console.log(functionSymbol);
+            //console.log("Validar parametros");
             if (this.validateParameters(this.paramList, functionSymbol.paramList!, controller, symbolTable, st_local)) {
                 let ret = functionSymbol.execute(controller, st_local);
 
+                
                 if (ret != null) {
                     return ret;
                 }
