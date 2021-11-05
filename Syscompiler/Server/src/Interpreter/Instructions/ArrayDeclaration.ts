@@ -119,6 +119,37 @@ export default class ArrayDeclaration implements Instruction {
         }
     }
     run(): AstNode {
-        throw new Error("Method not implemented.");
+        let parent = new AstNode("Declaracion de Vector", "");
+        let typeChild = new AstNode("Tipo", "");
+        typeChild.addChild(new AstNode(this.type.toString()!, ""));
+
+        parent.addChild(typeChild);
+
+        let idListChild = new AstNode("ID's", "");
+
+
+        for (let id of this.idList) {
+            idListChild.addChild(new AstNode(id, ""));
+        }
+
+        parent.addChild(idListChild);
+
+        parent.addChild(new AstNode("[", ""));
+        parent.addChild(new AstNode("]", ""));
+
+        parent.addChild(new AstNode("=", ""));
+
+        if (this.arrType == 1) {
+            parent.addChild(new AstNode("new", ""));
+            parent.addChild(typeChild);
+            parent.addChild(new AstNode("[", ""));
+            let expChild = new AstNode("Expresion", "");
+            expChild.addChild(this.expValue.run());
+            parent.addChild(expChild);
+            parent.addChild(new AstNode("]", ""));
+        } else {
+            parent.addChild(this.expValue.run());
+        }
+        return parent;
     }
 }

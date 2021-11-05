@@ -50,7 +50,10 @@ export default class Sum extends Operation {
                 return new Literal(value, enumType.STRING);
             } else {
                 //TODO: REPORTAR ERROR SEMANTICO
-                return new Literal("Error semantico", enumType.ERROR);
+                let error = new SysError("Semantico", `Incompatibilidad de tipos: ${resExp1.type.toString()} + ${resExp2.type.toString()}`, this.line, this.column);
+                controller.addError(error);
+                controller.append(` ***ERROR: Incompatibilidad de tipos: ${resExp1.type.toString()} + ${resExp2.type.toString()}. En la linea  ${this.line} y columna ${this.column}`);
+                return new Literal("Error semantico, suma", enumType.ERROR);
             }
         } else if (typeExp1 == enumType.DOUBLE) {
             if (typeExp2 == enumType.INTEGER) {
@@ -75,7 +78,10 @@ export default class Sum extends Operation {
                 return new Literal(value, enumType.STRING);
             } else {
                 //TODO: REPORTAR ERROR SEMANTICO
-                return new Literal("Error semantico", enumType.ERROR);
+                let error = new SysError("Semantico", `Incompatibilidad de tipos: ${resExp1.type.toString()} + ${resExp2.type.toString()}`, this.line, this.column);
+                controller.addError(error);
+                controller.append(` ***ERROR: Incompatibilidad de tipos: ${resExp1.type.toString()} + ${resExp2.type.toString()}. En la linea  ${this.line} y columna ${this.column}`);
+                return new Literal("Error semantico, suma", enumType.ERROR);
             }
         } else if (typeExp1 == enumType.BOOLEAN) {
             let booleanValue = 1;
@@ -94,7 +100,10 @@ export default class Sum extends Operation {
                 return new Literal(value, enumType.STRING);
             } else {
                 //TODO: REPORTAR ERROR SEMANTICO
-                return new Literal("Error semantico", enumType.ERROR);
+                let error = new SysError("Semantico", `Incompatibilidad de tipos: ${resExp1.type.toString()} + ${resExp2.type.toString()}`, this.line, this.column);
+                controller.addError(error);
+                controller.append(` ***ERROR: Incompatibilidad de tipos: ${resExp1.type.toString()} + ${resExp2.type.toString()}. En la linea  ${this.line} y columna ${this.column}`);
+                return new Literal("Error semantico, suma", enumType.ERROR);
             }
         } else if (typeExp1 == enumType.CHAR) {
             let asciiNum = resExp1.value.charCodeAt(0);
@@ -112,7 +121,10 @@ export default class Sum extends Operation {
                 return new Literal(value, enumType.STRING);
             } else {
                 //TODO: REPORTAR ERROR SEMANTICO
-                return new Literal("Error semantico", enumType.ERROR);
+                let error = new SysError("Semantico", `Incompatibilidad de tipos: ${resExp1.type.toString()} + ${resExp2.type.toString()}`, this.line, this.column);
+                controller.addError(error);
+                controller.append(` ***ERROR: Incompatibilidad de tipos: ${resExp1.type.toString()} + ${resExp2.type.toString()}. En la linea  ${this.line} y columna ${this.column}`);
+                return new Literal("Error semantico, suma", enumType.ERROR);
             }
         } else if (typeExp1 == enumType.STRING) {
             if (typeExp2 == enumType.INTEGER || enumType.DOUBLE || enumType.CHAR || enumType.BOOLEAN || enumType.STRING) {
@@ -120,10 +132,10 @@ export default class Sum extends Operation {
                 return new Literal(value, enumType.STRING);
             } else {
                 //TODO: REPORTAR ERROR SEMANTICO
-                let error = new SysError("Semantico", `Incompatible tipo ${resExp1.type.toString()} y ${resExp2.type.toString()} `, this.line, this.column);
+                let error = new SysError("Semantico", `Incompatibilidad de tipos: ${resExp1.type.toString()} + ${resExp2.type.toString()}`, this.line, this.column);
                 controller.addError(error);
-                controller.append(` ***ERROR: Incompatible tipo ${resExp1.type.toString()} y ${resExp2.type.toString()}. En la linea ${this.line} y columna ${this.column}`);
-                return new Literal("Error semantico", enumType.ERROR);
+                controller.append(` ***ERROR: Incompatibilidad de tipos: ${resExp1.type.toString()} + ${resExp2.type.toString()}. En la linea  ${this.line} y columna ${this.column}`);
+                return new Literal("Error semantico, suma", enumType.ERROR);
             }
         }
 

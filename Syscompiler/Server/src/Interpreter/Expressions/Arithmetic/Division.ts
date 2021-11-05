@@ -1,4 +1,5 @@
 import AstNode from "../../Ast/AstNode";
+import SysError from "../../Ast/SysError";
 import Controller from "../../Controller";
 import Expression from "../../Interfaces/Expression";
 import SymbolTable from "../../SymbolTable/SymbolTable";
@@ -6,13 +7,13 @@ import Type, { enumType } from "../../SymbolTable/Type";
 import Literal from "../Literal";
 import Operation from "../Operation";
 
-export default class Division extends Operation{
+export default class Division extends Operation {
 
     constructor(exp1: Expression, exp2: Expression, line: number, column: number) {
         super(exp1, exp2, line, column);
         this.operatorSign = "/";
     }
-    
+
     getValue(controller: Controller, symbolTable: SymbolTable): Expression {
         let resExp1 = this.exp1.getValue(controller, symbolTable);
         let resExp2 = this.exp2.getValue(controller, symbolTable);
@@ -33,7 +34,10 @@ export default class Division extends Operation{
                 return new Literal(value, enumType.DOUBLE);
             } else {
                 //TODO: REPORTAR ERROR SEMANTICO
-                return new Literal("Error semantico", enumType.ERROR);
+                let error = new SysError("Semantico", `Incompatibilidad de tipos: ${resExp1.type.toString()} / ${resExp2.type.toString()}`, this.line, this.column);
+                controller.addError(error);
+                controller.append(` ***ERROR: Incompatibilidad de tipos: ${resExp1.type.toString()} / ${resExp2.type.toString()}. En la linea  ${this.line} y columna ${this.column}`);
+                return new Literal("Error semantico, division", enumType.ERROR);
             }
         } else if (typeExp1 == enumType.DOUBLE) {
             if (typeExp2 == enumType.INTEGER) {
@@ -48,7 +52,10 @@ export default class Division extends Operation{
                 return new Literal(value, enumType.DOUBLE);
             } else {
                 //TODO: REPORTAR ERROR SEMANTICO
-                return new Literal("Error semantico", enumType.ERROR);
+                let error = new SysError("Semantico", `Incompatibilidad de tipos: ${resExp1.type.toString()} / ${resExp2.type.toString()}`, this.line, this.column);
+                controller.addError(error);
+                controller.append(` ***ERROR: Incompatibilidad de tipos: ${resExp1.type.toString()} / ${resExp2.type.toString()}. En la linea  ${this.line} y columna ${this.column}`);
+                return new Literal("Error semantico, division", enumType.ERROR);
             }
         } else if (typeExp1 == enumType.CHAR) {
             let asciiNum = resExp1.value.charCodeAt(0);
@@ -60,7 +67,10 @@ export default class Division extends Operation{
                 return new Literal(value, enumType.DOUBLE);
             } else {
                 //TODO: REPORTAR ERROR SEMANTICO
-                return new Literal("Error semantico", enumType.ERROR);
+                let error = new SysError("Semantico", `Incompatibilidad de tipos: ${resExp1.type.toString()} / ${resExp2.type.toString()}`, this.line, this.column);
+                controller.addError(error);
+                controller.append(` ***ERROR: Incompatibilidad de tipos: ${resExp1.type.toString()} / ${resExp2.type.toString()}. En la linea  ${this.line} y columna ${this.column}`);
+                return new Literal("Error semantico, division", enumType.ERROR);
             }
         }
         //TODO: REPORTAR ERROR SEMANTICO

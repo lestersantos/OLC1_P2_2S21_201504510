@@ -1,4 +1,5 @@
 import AstNode from "../../Ast/AstNode";
+import SysError from "../../Ast/SysError";
 import Controller from "../../Controller";
 import Expression from "../../Interfaces/Expression";
 import SymbolTable from "../../SymbolTable/SymbolTable";
@@ -30,11 +31,14 @@ export default class And extends Operation {
                 return new Literal(value, enumType.BOOLEAN);
             } else {
                 //TODO: REPORTAR ERROR SEMANTICO
-                return new Literal("Error semantico", enumType.ERROR);
+                let error = new SysError("Semantico", `Incompatibilidad de tipos: ${resExp1.type.toString()} || ${resExp2.type.toString()}`, this.line, this.column);
+                controller.addError(error);
+                controller.append(` ***ERROR: Incompatibilidad de tipos: ${resExp1.type.toString()} || ${resExp2.type.toString()}. En la linea  ${this.line} y columna ${this.column}`);
+                return new Literal("Error semantico en Or", enumType.ERROR);
             }
         }
 
-        return new Literal("Error semantico", enumType.ERROR);
+        return new Literal("Error semantico en Or", enumType.ERROR);
     }
 
 }

@@ -28,7 +28,15 @@ export default class ExpressionList implements Expression{
         return this;
     }
     run(): AstNode {
-        throw new Error("Method not implemented.");
+        let parent = new AstNode("Lista Expresiones","");
+        parent.addChild(new AstNode("{",""));
+        for(let exp of this.expressionList){
+            let expChild = new AstNode("Expresion","");
+            expChild.addChild(exp.run());
+            parent.addChild(expChild);
+        }
+        parent.addChild(new AstNode("}",""));
+        return parent;
     }
 
 }

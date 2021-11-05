@@ -73,6 +73,21 @@ export default class ArrayModification implements Instruction {
         }
     }
     run(): AstNode {
-        throw new Error("Method not implemented.");
+        let parent = new AstNode("Modificacion de Vector","");
+        let idChild = new AstNode("Id","");
+        idChild.addChild(new AstNode(this.id,""));
+        parent.addChild(idChild);
+
+        parent.addChild(new AstNode("[",""));
+        parent.addChild(this.expression.run());
+        parent.addChild(new AstNode("]",""));
+
+        parent.addChild(new AstNode("=",""));
+        let expChild = new AstNode("Expresion","");
+        expChild.addChild(this.value.run());
+
+        parent.addChild(expChild);
+
+        return parent;
     }
 }

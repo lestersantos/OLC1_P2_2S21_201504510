@@ -6,6 +6,8 @@ import { Instruction } from "../../Interfaces/Instruction";
 import SymbolTable from "../../SymbolTable/SymbolTable";
 import { enumType } from "../../SymbolTable/Type";
 import Break from "../TransferStatements/Break";
+import Continue from "../TransferStatements/Continue";
+import Return from "../TransferStatements/Return";
 
 export default class For implements Instruction{
 
@@ -37,14 +39,29 @@ export default class For implements Instruction{
          */
 
         if (conditionValue.type.getTypeName() == enumType.BOOLEAN) {
+            siguiente:
             while(this.condition.getValue(controller,localSt).value == true){
 
                 let localSt2 = new SymbolTable(localSt);
+                
                 for (let inst of this.instruction_List) {
                     let ret = inst.execute(controller,localSt2);
 
                     if (ret instanceof Break) {
                         controller.setIsLoopStmt(temp);
+                        return ret;
+                    }
+
+                    if(ret instanceof Continue){
+                        this.for_Update.execute(controller,localSt);
+                        continue siguiente;
+                    }   
+                    if (ret instanceof Return) {
+                        return ret;
+                    }
+
+                    if (ret != null) {
+                        return ret;
                     }
                 }
                 this.for_Update.execute(controller,localSt);

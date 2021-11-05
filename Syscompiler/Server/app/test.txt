@@ -140,6 +140,25 @@ r_sine = sin;
 writeline("sin-> "+r_sine);
 writeline(3.141592653589793^(2*5-1));
 writeline(0.0 + ((3.141592653589793^(2*5-1)) / 2));
+
+//probando continue en for
+for (int i = 0; i < 5; i++) {
+  if (i == 3) { continue; }
+  text = text + "The number is " + i + "\n";
+}
+
+writeline(text);
+
+//probando continue en while
+string text = "";
+int j = 0;
+text = "";
+while(j < 5){
+  if(j == 3) { continue; }
+  text = text + "The number is " + j + "\n";
+  j++;
+}
+writeline(text);
 writelinE(" -------------- FIN SENTENCIA WHILE ---------------------");
 
 WriteLine(" -------------- SENTENCIA SWITCH ---------------------");
@@ -232,6 +251,21 @@ for(int i = 0; i < 6; i++){
          arreglo[j+1] = arreglo[j];
         arreglo[j] = temp;
     }
+  }
+}
+WriteLine(arreglo);
+
+//insertion sort
+int arreglo[] = {5,2,4,6,1,3};
+Writeline(arreglo);
+
+for(int i = 0; i < 6; i++){
+  int key = arreglo[i];
+  int j = i;
+  while(i > 0 && arreglo[j-1] > key){
+    arreglo[j] = arreglo[j-1];
+    j = j -1;
+    arreglo[j] = key;
   }
 }
 WriteLine(arreglo);
