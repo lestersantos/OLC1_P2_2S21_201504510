@@ -36,11 +36,25 @@ export default class Controller {
         while (st != null) {
 
             st.currentST.forEach((sym: Symbol, key: string) => {
+                /*
                 htmlBody += "<tr ><th scope=\"row\">" + this.getRol(sym) + "</th><td>" + sym.id +
                     "</td><td>" + this.getType(sym) + "</td>" +
                     "</td><td>" + this.getScope() +
                     "</td><td>" + this.getValue(sym) +
+                    "</td><td>" + this.getParameters(sym) + "</td>" + "</tr>";*/
+                    if(sym.symbolType == SymbolType.VECTOR){
+                        htmlBody += "<tr ><th scope=\"row\">" + this.getRol(sym) + "</th><td>" + sym.id +
+                    "</td><td>" + this.getType(sym) + "</td>" +
+                    "</td><td>" + this.getScope() +
+                    "</td><td>" +"vector size: "+ sym.value.length.toString() +
                     "</td><td>" + this.getParameters(sym) + "</td>" + "</tr>";
+                    }else{
+                        htmlBody += "<tr ><th scope=\"row\">" + this.getRol(sym) + "</th><td>" + sym.id +
+                    "</td><td>" + this.getType(sym) + "</td>" +
+                    "</td><td>" + this.getScope() +
+                    "</td><td>" + this.getValue(sym) +
+                    "</td><td>" + this.getParameters(sym) + "</td>" + "</tr>";
+                    }
             })
 
             st = st.previousST;

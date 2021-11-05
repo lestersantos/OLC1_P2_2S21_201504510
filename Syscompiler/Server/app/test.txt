@@ -222,7 +222,19 @@ display();
 
 Writeline("---------------- FIN DE FUNCIONES Y METODOS ---------------");
 
-
+//bubblesort
+int arreglo[] = {5,2,4,6,1,3};
+Writeline(arreglo);
+for(int i = 0; i < 6; i++){
+  for(int j = 0; j< 5; j++){
+   if(arreglo[j] > arreglo[j+1]){
+      int temp = arreglo[j+1];
+         arreglo[j+1] = arreglo[j];
+        arreglo[j] = temp;
+    }
+  }
+}
+WriteLine(arreglo);
 /*
 
 string var2 = "this is a string with a long string";

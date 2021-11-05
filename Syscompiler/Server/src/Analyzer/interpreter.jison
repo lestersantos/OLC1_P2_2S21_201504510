@@ -193,6 +193,11 @@ character   (\'({escape2} | {acceptance2})\')
     const Call = require('../Interpreter/Instructions/Call');
     const StartWith = require('../Interpreter/Instructions/StartWith');
 
+    const ArrayDecl  = require('../Interpreter/Instructions/ArrayDeclaration');
+    const ExpressionList = require('../Interpreter/Expressions/ExpressionList');
+    const ArrayAccess = require('../Interpreter/Expressions/ArrayAccess');
+    const ArrayModification = require('../Interpreter/Instructions/ArrayModification');
+
     const SysError = require('../Interpreter/Ast/SysError');
 
 %}
@@ -238,6 +243,8 @@ instruccion : startwith            {$$ = $1}
             | CONTINUE SEMICOLON      { $$ = new Continue.default(); }
             | RETURN SEMICOLON      { $$ = new Return.default(null); }
             | RETURN e SEMICOLON      { $$ = new Return.default($2); }
+            | array_decl            {$$ = $1; }
+            | array_modification    {$$ = $1; }
             | error                 { console.log("Error Sintactico "+yytext + 
                                                   " linea: "+this._$.first_line + 
                                                   " columna: "+this._$.first_column);
@@ -337,6 +344,14 @@ ternary : e QMARK e COLON e { $$ = new Ternary.default($1, $3, $5, @1.first_line
 
 startwith :   START WITH func_call SEMICOLON {$$ = new StartWith.default($3,@1.first_line, @1.last_column);}
             ;
+
+array_decl : decl_type id_list LSBRACKET RSBRACKET EQUAL NEW decl_type LSBRACKET e RSBRACKET SEMICOLON {$$ = new ArrayDecl.default(1,$1,$2,$9,@1.first_line,@1.last_column); }
+              |decl_type id_list LSBRACKET RSBRACKET EQUAL e SEMICOLON { $$ = new ArrayDecl.default(2,$1,$2,$6,@1.first_line,@1.last_column);}
+              ; 
+
+array_modification : ID LSBRACKET e RSBRACKET EQUAL e SEMICOLON { $$ = new ArrayModification.default($1,$3,$6,@1.first_line,@1.last_column); }
+                      ;
+
 e
     : e PLUS e              { $$ = new Sum.default($1, $3, @1.first_line, @1.last_column); }
     | e MINUS e             { $$ = new Subtraction.default($1, $3, @1.first_line, @1.last_column); }
@@ -369,5 +384,7 @@ e
     | func_call             {$$ = $1; }
     | ternary               {$$ = $1; }
     | TYPEOF LPAR e RPAR    {$$ = new TypeOf.default($3,@1.first_line, @1.last_column); }
+    | LCBRACKET value_List RCBRACKET {$$ = new ExpressionList.default($2,@1.first_line,@1.last_column); }
+    | ID LSBRACKET e RSBRACKET { $$ = new ArrayAccess.default($1,$3,@1.first_line, @1.last_column);} 
     ;
 
