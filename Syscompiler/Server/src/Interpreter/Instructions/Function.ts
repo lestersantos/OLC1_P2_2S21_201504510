@@ -37,7 +37,7 @@ export default class Function extends Symbol implements Instruction {
             let ret = inst.execute(controller, st_local);
 
             if (ret instanceof Return) {
-                console.log("encontro return en funcion. se termina la funcion");
+                //console.log("encontro return en funcion. se termina la funcion");
                 break;
             }
             if (ret != null) {

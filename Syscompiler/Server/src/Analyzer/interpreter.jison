@@ -198,6 +198,10 @@ character   (\'({escape2} | {acceptance2})\')
     const ArrayAccess = require('../Interpreter/Expressions/ArrayAccess');
     const ArrayModification = require('../Interpreter/Instructions/ArrayModification');
 
+    const ListDeclaration = require('../Interpreter/Instructions/ListDeclaration');
+    const AppendList = require('../Interpreter/Instructions/AppendList');
+    const GetValueList = require('../Interpreter/Expressions/GetValueList');
+
     const SysError = require('../Interpreter/Ast/SysError');
 
 %}
@@ -245,6 +249,8 @@ instruccion : startwith            {$$ = $1}
             | RETURN e SEMICOLON      { $$ = new Return.default($2); }
             | array_decl            {$$ = $1; }
             | array_modification    {$$ = $1; }
+            | list_decl             {$$ = $1; }
+            | append_list           {$$ = $1; }
             | error                 { console.log("Error Sintactico "+yytext + 
                                                   " linea: "+this._$.first_line + 
                                                   " columna: "+this._$.first_column);
@@ -352,6 +358,12 @@ array_decl : decl_type id_list LSBRACKET RSBRACKET EQUAL NEW decl_type LSBRACKET
 array_modification : ID LSBRACKET e RSBRACKET EQUAL e SEMICOLON { $$ = new ArrayModification.default($1,$3,$6,@1.first_line,@1.last_column); }
                       ;
 
+list_decl :  DLIST LESSTHAN decl_type GREATERTHAN ID EQUAL NEW DLIST LESSTHAN decl_type GREATERTHAN SEMICOLON { $$ = new ListDeclaration.default($3,$5,@1.first_line,@1.last_column);}
+            ;
+
+append_list : APPEND LPAR ID COMMA e RPAR SEMICOLON { $$ = new AppendList.default($3,$5,@1.first_line,@1.last_column); }
+              ;
+
 e
     : e PLUS e              { $$ = new Sum.default($1, $3, @1.first_line, @1.last_column); }
     | e MINUS e             { $$ = new Subtraction.default($1, $3, @1.first_line, @1.last_column); }
@@ -386,5 +398,7 @@ e
     | TYPEOF LPAR e RPAR    {$$ = new TypeOf.default($3,@1.first_line, @1.last_column); }
     | LCBRACKET value_List RCBRACKET {$$ = new ExpressionList.default($2,@1.first_line,@1.last_column); }
     | ID LSBRACKET e RSBRACKET { $$ = new ArrayAccess.default($1,$3,@1.first_line, @1.last_column);} 
+    | GETVALUE LPAR ID COMMA e RPAR = { $$ = new GetValueList.default($3,$5,@1.first_line, @1.last_column);}
+    | SETVALUE LPAR ID COMMA e COMMA e RPAR SEMICOLON {}
     ;
 

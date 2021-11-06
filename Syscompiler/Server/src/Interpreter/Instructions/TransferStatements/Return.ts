@@ -19,7 +19,7 @@ export default class Return implements Instruction {
             //console.log(this.returnValue.getValue(controller,symbolTable));
             return this.returnValue.getValue(controller, symbolTable);
         } else {
-            console.log("return sin expresion");
+            //console.log("return sin expresion");
             return this;
             
         }

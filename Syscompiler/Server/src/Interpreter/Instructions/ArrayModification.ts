@@ -27,9 +27,9 @@ export default class ArrayModification implements Instruction {
         let resExpr = this.expression.getValue(controller, symbolTable);
         let arrayIndex = resExpr.value;
         let resExprType = resExpr.type;
+        if (symbolTable.exist(this.id)) {
+            if (resExprType.getTypeName() == enumType.INTEGER) {
 
-        if (resExprType.getTypeName() == enumType.INTEGER) {
-            if (symbolTable.exist(this.id)) {
                 let resNewValue = this.value.getValue(controller, symbolTable);
                 let arraySym = symbolTable.get(this.id);
 
@@ -57,33 +57,34 @@ export default class ArrayModification implements Instruction {
 
                     return new Literal(`Semantico, La variable ${this.id} no es un vector,`, enumType.ERROR);
                 }
+
+
             } else {
-                let sysError = new SysError("Semantico", `La variable ${this.id} no existe en la tabla de simbolos.`, this.line, this.column);
+                let sysError = new SysError("Semantico", `Incompatibiliad de tipos tipo ${resExpr.type.toString()} no puede asignarse a int,  `, this.line, this.column);
                 controller.addError(sysError);
-                controller.append(` ***ERROR: La variable ${this.id} no existe en la tabla de simbolos. En la linea ${this.line} y columna ${this.column}`);
-                return new Literal(`Semantico, La variable ${this.id} no existe en la tabla de simbolos.`, enumType.ERROR);
+                controller.append(` ***ERROR: Incompatibiliad de tipos tipo ${resExpr.type.toString()} no puede asignarse a int. En la linea ${this.line} y columna ${this.column}`);
+
+                return new Literal(`Semantico, Incompatibiliad de tipos tipo ${resExpr.type.toString()} no puede asignarse a int,  `, enumType.ERROR);
             }
-
         } else {
-            let sysError = new SysError("Semantico", `Incompatibiliad de tipos tipo ${resExpr.type.toString()} no puede asignarse a int,  `, this.line, this.column);
+            let sysError = new SysError("Semantico", `La variable ${this.id} no existe en la tabla de simbolos.`, this.line, this.column);
             controller.addError(sysError);
-            controller.append(` ***ERROR: Incompatibiliad de tipos tipo ${resExpr.type.toString()} no puede asignarse a int. En la linea ${this.line} y columna ${this.column}`);
-
-            return new Literal(`Semantico, Incompatibiliad de tipos tipo ${resExpr.type.toString()} no puede asignarse a int,  `, enumType.ERROR);
+            controller.append(` ***ERROR: La variable ${this.id} no existe en la tabla de simbolos. En la linea ${this.line} y columna ${this.column}`);
+            return new Literal(`Semantico, La variable ${this.id} no existe en la tabla de simbolos.`, enumType.ERROR);
         }
     }
     run(): AstNode {
-        let parent = new AstNode("Modificacion de Vector","");
-        let idChild = new AstNode("Id","");
-        idChild.addChild(new AstNode(this.id,""));
+        let parent = new AstNode("Modificacion de Vector", "");
+        let idChild = new AstNode("Id", "");
+        idChild.addChild(new AstNode(this.id, ""));
         parent.addChild(idChild);
 
-        parent.addChild(new AstNode("[",""));
+        parent.addChild(new AstNode("[", ""));
         parent.addChild(this.expression.run());
-        parent.addChild(new AstNode("]",""));
+        parent.addChild(new AstNode("]", ""));
 
-        parent.addChild(new AstNode("=",""));
-        let expChild = new AstNode("Expresion","");
+        parent.addChild(new AstNode("=", ""));
+        let expChild = new AstNode("Expresion", "");
         expChild.addChild(this.value.run());
 
         parent.addChild(expChild);
