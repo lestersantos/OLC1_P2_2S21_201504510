@@ -201,6 +201,7 @@ character   (\'({escape2} | {acceptance2})\')
     const ListDeclaration = require('../Interpreter/Instructions/ListDeclaration');
     const AppendList = require('../Interpreter/Instructions/AppendList');
     const GetValueList = require('../Interpreter/Expressions/GetValueList');
+    const ListModification = require('../Interpreter/Instructions/ListModification');
 
     const SysError = require('../Interpreter/Ast/SysError');
 
@@ -251,6 +252,7 @@ instruccion : startwith            {$$ = $1}
             | array_modification    {$$ = $1; }
             | list_decl             {$$ = $1; }
             | append_list           {$$ = $1; }
+            | list_modification     {$$ = $1; }
             | error                 { console.log("Error Sintactico "+yytext + 
                                                   " linea: "+this._$.first_line + 
                                                   " columna: "+this._$.first_column);
@@ -364,6 +366,9 @@ list_decl :  DLIST LESSTHAN decl_type GREATERTHAN ID EQUAL NEW DLIST LESSTHAN de
 append_list : APPEND LPAR ID COMMA e RPAR SEMICOLON { $$ = new AppendList.default($3,$5,@1.first_line,@1.last_column); }
               ;
 
+list_modification : SETVALUE LPAR ID COMMA e COMMA e RPAR SEMICOLON { $$ = new ListModification.default($3,$5,$7,@1.first_line,@1.last_column);}
+                    ;
+
 e
     : e PLUS e              { $$ = new Sum.default($1, $3, @1.first_line, @1.last_column); }
     | e MINUS e             { $$ = new Subtraction.default($1, $3, @1.first_line, @1.last_column); }
@@ -399,6 +404,5 @@ e
     | LCBRACKET value_List RCBRACKET {$$ = new ExpressionList.default($2,@1.first_line,@1.last_column); }
     | ID LSBRACKET e RSBRACKET { $$ = new ArrayAccess.default($1,$3,@1.first_line, @1.last_column);} 
     | GETVALUE LPAR ID COMMA e RPAR = { $$ = new GetValueList.default($3,$5,@1.first_line, @1.last_column);}
-    | SETVALUE LPAR ID COMMA e COMMA e RPAR SEMICOLON {}
     ;
 
