@@ -21,7 +21,7 @@ export default class Assignment implements Instruction {
     }
 
     execute(controller: Controller, symbolTable: SymbolTable) {
-
+        
         if (symbolTable.exist(this.identifier) == true) {
 
             let resExpr = this.expression.getValue(controller, symbolTable);

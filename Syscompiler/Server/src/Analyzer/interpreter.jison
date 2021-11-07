@@ -203,6 +203,8 @@ character   (\'({escape2} | {acceptance2})\')
     const GetValueList = require('../Interpreter/Expressions/GetValueList');
     const ListModification = require('../Interpreter/Instructions/ListModification');
 
+    const Length = require('../Interpreter/Expressions/NativeFunctions/Length');
+
     const SysError = require('../Interpreter/Ast/SysError');
 
 %}
@@ -404,5 +406,6 @@ e
     | LCBRACKET value_List RCBRACKET {$$ = new ExpressionList.default($2,@1.first_line,@1.last_column); }
     | ID LSBRACKET e RSBRACKET { $$ = new ArrayAccess.default($1,$3,@1.first_line, @1.last_column);} 
     | GETVALUE LPAR ID COMMA e RPAR = { $$ = new GetValueList.default($3,$5,@1.first_line, @1.last_column);}
+    | LENGTH LPAR e RPAR     {$$ = new Length.default($3,@1.first_line,@1.last_column);}
     ;
 

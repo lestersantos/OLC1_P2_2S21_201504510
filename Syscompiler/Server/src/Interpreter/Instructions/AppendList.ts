@@ -58,7 +58,21 @@ export default class AppendList implements Instruction {
         }
     }
     run(): AstNode {
-        throw new Error("Method not implemented.");
+        let parent = new AstNode("Agregar valor a lista","");
+        parent.addChild(new AstNode("append",""));
+        parent.addChild(new AstNode("(",""));
+
+        let idChild = new AstNode("ID","");
+        idChild.addChild(new AstNode(this.id,""));
+        parent.addChild(idChild);
+
+        let expChild = new AstNode("Expresion","");
+        expChild.addChild(this.expression.run());
+        parent.addChild(expChild);
+
+        parent.addChild(new AstNode(")",""));
+
+        return parent;
     }
 
 

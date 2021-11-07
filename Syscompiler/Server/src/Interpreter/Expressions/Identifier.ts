@@ -22,6 +22,7 @@ export default class Identifier implements Expression{
     }
 
     getValue(controller: Controller, symbolTable: SymbolTable): Expression {
+        console.log("identificador");
         let idExist = symbolTable.get(this.id);
 
         if( idExist != null){

@@ -26,6 +26,7 @@ export default class ArrayAccess implements Expression {
     }
 
     getValue(controller: Controller, symbolTable: SymbolTable): Expression {
+        console.log("array access");
         let resExpr = this.expression.getValue(controller, symbolTable);
         let arrayIndex = resExpr.value;
         let resExprType = resExpr.type;

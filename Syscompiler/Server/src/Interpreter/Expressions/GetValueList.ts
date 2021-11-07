@@ -60,6 +60,20 @@ export default class AppendList implements Expression {
         return new Literal(`Semantico, La variable \"${this.id}\" no existe en la tabla de simbolos,`, enumType.ERROR);
     }
     run(): AstNode {
-        throw new Error("Method not implemented.");
+        let parent = new AstNode("Acceso a Listas","");
+        parent.addChild(new AstNode("getValue",""));
+        parent.addChild(new AstNode("(",""));
+
+        let idChild = new AstNode("ID","");
+        idChild.addChild(new AstNode(this.id,""));
+        parent.addChild(idChild);
+
+        let expChild = new AstNode("Expresion","");
+        expChild.addChild(this.expression.run());
+        parent.addChild(expChild);
+
+        parent.addChild(new AstNode(")",""));
+
+        return parent;
     }
 }

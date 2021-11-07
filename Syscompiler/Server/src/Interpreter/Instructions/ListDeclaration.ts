@@ -35,6 +35,21 @@ export default class ListDeclaration implements Instruction {
         }
     }
     run(): AstNode {
-        throw new Error("Method not implemented.");
+        let parent = new AstNode("Lista","");
+        parent.addChild(new AstNode("DynamicList",""));
+        parent.addChild(new AstNode("<",""));
+        let typeChild = new AstNode("Tipo","");
+        typeChild.addChild(new AstNode(this.type.toString()!,""));
+        parent.addChild(typeChild);
+        parent.addChild(new AstNode(">",""));
+
+        parent.addChild(new AstNode("=",""));
+        parent.addChild(new AstNode("new",""));
+        parent.addChild(new AstNode("DynamicList",""));
+        parent.addChild(new AstNode("<",""));
+        parent.addChild(typeChild);
+        parent.addChild(new AstNode(">",""));
+
+        return parent;
     }
 }

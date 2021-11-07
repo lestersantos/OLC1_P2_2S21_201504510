@@ -27,6 +27,7 @@ export default class Declaration implements Instruction {
     }
 
     execute(controller: Controller, symbolTable: SymbolTable) {
+        console.log("declaration");
         for (let id of this.idList) {
             if (symbolTable.existInCurrent(id) == true) {
                 let error = new SysError("semantico", `La variable ${id} ya existe en el entorno actual, por lo que no se puede declarar. `, this.line, this.column);

@@ -74,6 +74,24 @@ export default class ListModification implements Instruction {
         }
     }
     run(): AstNode {
-        throw new Error("Method not implemented.");
+        let parent = new AstNode("Modificacion Lista","");
+
+        parent.addChild(new AstNode("setValue",""));
+        parent.addChild(new AstNode("(",""));
+        let idChild = new AstNode("ID","");
+        idChild.addChild(new AstNode(this.id,""));
+        parent.addChild(idChild);
+
+        let indexChild = new AstNode("Expresion","");
+        indexChild.addChild(this.expression.run());
+        parent.addChild(indexChild);
+
+        let valueChild = new AstNode("Expresion","");
+        valueChild.addChild(this.value.run());
+        parent.addChild(valueChild);
+
+        parent.addChild(new AstNode(")",""));
+
+        return parent;
     }
 }

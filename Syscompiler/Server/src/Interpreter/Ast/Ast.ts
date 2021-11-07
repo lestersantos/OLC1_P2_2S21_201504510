@@ -5,6 +5,8 @@ import Function from "../Instructions/Function";
 import AstNode from "./AstNode";
 import Declaration from "../Instructions/Declaration";
 import StartWith from "../Instructions/StartWith";
+import ArrayDeclaration from "../Instructions/ArrayDeclaration";
+import ListDeclaration from "../Instructions/ListDeclaration";
 
 export default class Ast implements Instruction {
 
@@ -26,7 +28,7 @@ export default class Ast implements Instruction {
         }
 
         for(let instruction of this.instructionList){
-            if(instruction instanceof Declaration){
+            if(instruction instanceof Declaration || instruction instanceof ArrayDeclaration || instruction instanceof ListDeclaration){
                 instruction.execute(controller,symbolTable);
             }
         }
@@ -40,7 +42,7 @@ export default class Ast implements Instruction {
                 //Solo puede ejecutarse una instruccion start with
             }
 
-            if (!(instruction instanceof Function) && !(instruction instanceof Declaration)&& !(instruction instanceof StartWith)) {
+            if (!(instruction instanceof Function) && !(instruction instanceof Declaration)&& !(instruction instanceof ArrayDeclaration) && !(instruction instanceof ListDeclaration)&& !(instruction instanceof StartWith)) {
                 instruction.execute(controller, symbolTable);
             }
         }
