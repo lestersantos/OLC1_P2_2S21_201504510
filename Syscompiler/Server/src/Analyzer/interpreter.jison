@@ -178,6 +178,7 @@ character   (\'({escape2} | {acceptance2})\')
     const Assignment = require('../Interpreter/Instructions/Assignment');
     const For = require('../Interpreter/Instructions/LoopStatements/For');
     const While = require('../Interpreter/Instructions/LoopStatements/While');
+    const DoWhile = require('../Interpreter/Instructions/LoopStatements/DoWhile');
 
     const Ternary = require('../Interpreter/Expressions/Ternary'); 
 
@@ -241,6 +242,7 @@ instruccion : startwith            {$$ = $1}
             | if_statement         { $$ = $1; }
             | for_statement        { $$ = $1; }
             | while_statement      { $$ = $1; }
+            | do_while_statement   { $$ = $1; }
             | switch_statement     { $$ = $1; }
             | post_increment  SEMICOLON     { $$ = $1; }
             | post_decrement  SEMICOLON     { $$ = $1; }
@@ -305,6 +307,9 @@ for_update :    post_increment { $$ = $1; }
 
 while_statement : WHILE LPAR e RPAR LCBRACKET instrucciones RCBRACKET { $$ = new While.default($3, $6, @1.first_line, @1.last_column); }
                   ;
+
+do_while_statement : DO LCBRACKET instrucciones RCBRACKET WHILE LPAR e RPAR SEMICOLON { $$ = new DoWhile.default($7,$3,@1.first_line,@1.last_column); }
+                     ;
 
 switch_statement :  SWITCH LPAR e RPAR LCBRACKET case_list RCBRACKET         { $$ = new Switch.default($3, $6, null, @1.first_line, @1.last_column); }
                   | SWITCH LPAR e RPAR LCBRACKET case_list default RCBRACKET { $$ = new Switch.default($3, $6, $7, @1.first_line, @1.last_column); }
